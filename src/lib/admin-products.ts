@@ -6,10 +6,10 @@ export type AdminProduct = {
   id: string;
   name: string;
   price: number;
-  oldPrice?: number;
+  oldPrice?: number | undefined;
   stock: number;
   sizes: string[];
-  badge?: string;
+  badge?: string | undefined;
   category: string;
   description: string;
   image: string;
