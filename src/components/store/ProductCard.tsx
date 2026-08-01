@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, type Product } from "@/lib/products";
+import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
-  const [size, setSize] = useState(product.sizes[2]);
+  const [size, setSize] = useState(product.sizes[2] ?? product.sizes[0] ?? "M");
+  const { addItem } = useCart();
+
 
   return (
     <article className="group flex flex-col border border-border bg-card">
@@ -63,11 +66,18 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <button
-          onClick={() =>
+          onClick={() => {
+            addItem({
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              size,
+            });
             toast.success("Adicionado ao carrinho", {
               description: `${product.name} — tamanho ${size}`,
-            })
-          }
+            });
+          }}
           className="w-full bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
         >
           Comprar

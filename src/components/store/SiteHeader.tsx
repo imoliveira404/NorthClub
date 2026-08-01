@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { useCart } from "@/lib/cart";
 
 const ANNOUNCEMENTS = [
   "DIRETO DO BRASIL E SEM TAXA",
@@ -20,6 +22,7 @@ const NAV = [
 ];
 
 export function SiteHeader() {
+  const { count } = useCart();
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
 
@@ -78,12 +81,13 @@ export function SiteHeader() {
                 <span className="text-muted-foreground">Ou cadastre-se</span>
               </span>
             </a>
-            <button className="relative text-foreground" aria-label="Carrinho">
+            <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />
               <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
+                {count}
               </span>
-            </button>
+            </Link>
+
           </div>
         </div>
 
