@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
+import { OrdersPanel } from "@/components/admin/OrdersPanel";
+
 import { formatBRL } from "@/lib/products";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
