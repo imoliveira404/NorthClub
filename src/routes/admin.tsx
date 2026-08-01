@@ -1,18 +1,28 @@
-import { useEffect, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
-import { ImagePlus, Loader2, Pencil, Plus, Save, Trash2, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useServerFn } from "@tanstack/react-start";
+import {
+  ImagePlus,
+  Loader2,
+  LogOut,
+  Pencil,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { formatBRL } from "@/lib/products";
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/lib/use-session";
+import { claimAdminRole } from "@/lib/store.functions";
 import {
+  CATEGORIES,
   SIZE_OPTIONS,
   emptyDraft,
-  loadAdminProducts,
-  newId,
-  readFileAsDataUrl,
-  saveAdminProducts,
   type AdminProduct,
   type AdminProductDraft,
 } from "@/lib/admin-products";
@@ -39,8 +49,6 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-const CATEGORIES = ["Brasileirão", "Internacionais", "Retrô", "Treino"];
-
 function Label({ children }: { children: React.ReactNode }) {
   return (
     <span className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
@@ -52,22 +60,99 @@ function Label({ children }: { children: React.ReactNode }) {
 const inputClass =
   "w-full border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary";
 
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5;
+
+type ProductRow = {
+  id: string;
+  name: string;
+  price: number | string;
+  old_price: number | string | null;
+  stock: number;
+  sizes: string[] | null;
+  badge: string | null;
+  category: string | null;
+  description: string | null;
+  image_url: string | null;
+  active: boolean;
+  created_at: string;
+};
+
+const rowToProduct = (row: ProductRow): AdminProduct => ({
+  id: row.id,
+  name: row.name,
+  price: Number(row.price),
+  oldPrice: row.old_price === null ? undefined : Number(row.old_price),
+  stock: Number(row.stock ?? 0),
+  sizes: row.sizes ?? [],
+  badge: row.badge ?? undefined,
+  category: row.category ?? "Brasileirão",
+  description: row.description ?? "",
+  image: row.image_url ?? "",
+  active: row.active,
+  createdAt: row.created_at,
+});
+
 function AdminPage() {
+  const navigate = useNavigate();
+  const { session, loading: sessionLoading } = useSession();
+  const claimAdmin = useServerFn(claimAdminRole);
+
+  const [checkingRole, setCheckingRole] = useState(true);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [products, setProducts] = useState<AdminProduct[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [listLoading, setListLoading] = useState(false);
   const [draft, setDraft] = useState<AdminProductDraft>(emptyDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setProducts(loadAdminProducts());
-    setHydrated(true);
+    if (!sessionLoading && !session) {
+      navigate({ to: "/auth", search: { redirect: "/admin" }, replace: true });
+    }
+  }, [session, sessionLoading, navigate]);
+
+  const loadProducts = useCallback(async () => {
+    setListLoading(true);
+    const { data, error } = await supabase
+      .from("products")
+      .select(
+        "id, name, price, old_price, stock, sizes, badge, category, description, image_url, active, created_at",
+      )
+      .order("created_at", { ascending: false });
+    setListLoading(false);
+    if (error) {
+      toast.error("Não foi possível carregar os produtos", {
+        description: error.message,
+      });
+      return;
+    }
+    setProducts(((data ?? []) as ProductRow[]).map(rowToProduct));
   }, []);
 
   useEffect(() => {
-    if (hydrated) saveAdminProducts(products);
-  }, [products, hydrated]);
+    if (!session) return;
+    let cancelled = false;
+    (async () => {
+      setCheckingRole(true);
+      await claimAdmin().catch(() => undefined);
+      const { data } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+      if (cancelled) return;
+      const admin = Boolean(data);
+      setIsAdmin(admin);
+      setCheckingRole(false);
+      if (admin) void loadProducts();
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [session, claimAdmin, loadProducts]);
 
   function resetForm() {
     setDraft(emptyDraft());
@@ -91,22 +176,36 @@ function AdminPage() {
       toast.error("Selecione um arquivo de imagem.");
       return;
     }
-    if (file.size > 3 * 1024 * 1024) {
-      toast.error("Imagem muito grande", { description: "Limite de 3 MB." });
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Imagem muito grande", { description: "Limite de 5 MB." });
       return;
     }
     setUploading(true);
     try {
-      const dataUrl = await readFileAsDataUrl(file);
-      setDraft((d) => ({ ...d, image: dataUrl }));
-    } catch {
-      toast.error("Não foi possível carregar a imagem.");
+      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
+      const path = `${session?.user.id}/${Date.now()}-${Math.random()
+        .toString(36)
+        .slice(2, 8)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from("product-images")
+        .upload(path, file, { contentType: file.type, upsert: false });
+      if (uploadError) throw uploadError;
+      const { data, error: signError } = await supabase.storage
+        .from("product-images")
+        .createSignedUrl(path, SIGNED_URL_TTL);
+      if (signError || !data) throw signError ?? new Error("URL não gerada");
+      setDraft((d) => ({ ...d, image: data.signedUrl }));
+      toast.success("Imagem enviada");
+    } catch (error) {
+      toast.error("Não foi possível enviar a imagem", {
+        description: error instanceof Error ? error.message : undefined,
+      });
     } finally {
       setUploading(false);
     }
   }
 
-  function handleSubmit(event: React.FormEvent) {
+  async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const name = draft.name.trim();
     if (name.length < 3) {
@@ -126,39 +225,97 @@ function AdminPage() {
       return;
     }
 
-    const payload: AdminProductDraft = {
-      ...draft,
+    const payload = {
       name,
+      price: draft.price,
+      old_price: draft.oldPrice ?? null,
+      stock: draft.stock,
+      sizes: draft.sizes,
+      badge: draft.badge?.trim() ? draft.badge.trim().slice(0, 40) : null,
+      category: draft.category,
       description: draft.description.trim().slice(0, 1200),
-      badge: draft.badge?.trim() ? draft.badge.trim().slice(0, 40) : undefined,
+      image_url: draft.image,
+      active: draft.active,
     };
 
-    if (editingId) {
-      setProducts((list) =>
-        list.map((p) => (p.id === editingId ? { ...p, ...payload } : p)),
-      );
-      toast.success("Produto atualizado");
-    } else {
-      setProducts((list) => [
-        { id: newId(), createdAt: new Date().toISOString(), ...payload },
-        ...list,
-      ]);
-      toast.success("Produto cadastrado");
+    setSaving(true);
+    const { error } = editingId
+      ? await supabase.from("products").update(payload).eq("id", editingId)
+      : await supabase.from("products").insert(payload);
+    setSaving(false);
+
+    if (error) {
+      toast.error("Não foi possível salvar", { description: error.message });
+      return;
     }
+    toast.success(editingId ? "Produto atualizado" : "Produto cadastrado");
     resetForm();
+    void loadProducts();
   }
 
   function startEdit(product: AdminProduct) {
-    const { id: _id, createdAt: _createdAt, ...rest } = product;
-    setDraft({ ...rest, badge: rest.badge ?? "" });
+    setDraft({
+      name: product.name,
+      price: product.price,
+      oldPrice: product.oldPrice,
+      stock: product.stock,
+      sizes: product.sizes,
+      badge: product.badge ?? "",
+      category: product.category,
+      description: product.description,
+      image: product.image,
+      active: product.active,
+    });
     setEditingId(product.id);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function remove(id: string) {
-    setProducts((list) => list.filter((p) => p.id !== id));
+  async function remove(id: string) {
+    const { error } = await supabase.from("products").delete().eq("id", id);
+    if (error) {
+      toast.error("Não foi possível remover", { description: error.message });
+      return;
+    }
     if (editingId === id) resetForm();
     toast.success("Produto removido");
+    void loadProducts();
+  }
+
+  if (sessionLoading || (session && checkingRole)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <Loader2 className="size-6 animate-spin text-muted-foreground" />
+      </div>
+    );
+  }
+
+  if (session && !isAdmin) {
+    return (
+      <div className="min-h-screen bg-background">
+        <SiteHeader />
+        <main className="mx-auto max-w-xl px-4 py-24 text-center">
+          <h1 className="font-display text-3xl uppercase text-foreground">
+            Acesso restrito
+          </h1>
+          <p className="mt-3 text-sm text-muted-foreground">
+            A conta <strong>{session.user.email}</strong> não tem permissão de
+            administrador. Entre com a conta de administrador da loja.
+          </p>
+          <button
+            type="button"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/auth", search: { redirect: "/admin" }, replace: true });
+            }}
+            className="mt-6 inline-flex items-center gap-2 border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:border-primary"
+          >
+            <LogOut className="size-4" /> Trocar de conta
+          </button>
+        </main>
+        <SiteFooter />
+        <Toaster />
+      </div>
+    );
   }
 
   return (
@@ -166,14 +323,28 @@ function AdminPage() {
       <SiteHeader />
 
       <main className="mx-auto max-w-7xl px-4 py-12">
-        <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
-          Painel de produtos
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-          Cadastre camisas com imagem, nome, preço, tamanhos, estoque e
-          descrição. Os dados ficam salvos neste navegador — quando quiser
-          publicar para todos os clientes, ativamos o banco de dados.
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
+              Painel de produtos
+            </h1>
+            <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
+              Cadastre camisas com imagem, nome, preço, tamanhos, estoque e
+              descrição. Tudo salvo no banco e publicado na vitrine
+              automaticamente.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              await supabase.auth.signOut();
+              navigate({ to: "/", replace: true });
+            }}
+            className="flex items-center gap-2 border border-border px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-primary"
+          >
+            <LogOut className="size-3.5" /> Sair
+          </button>
+        </div>
 
         <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
           <form
@@ -199,14 +370,14 @@ function AdminPage() {
               <Label>Imagem</Label>
               <div className="flex items-start gap-4">
                 <div className="flex size-28 shrink-0 items-center justify-center border border-dashed border-border bg-secondary">
-                  {draft.image ? (
+                  {uploading ? (
+                    <Loader2 className="size-5 animate-spin text-muted-foreground" />
+                  ) : draft.image ? (
                     <img
                       src={draft.image}
                       alt="Pré-visualização do produto"
                       className="size-28 object-cover"
                     />
-                  ) : uploading ? (
-                    <Loader2 className="size-5 animate-spin text-muted-foreground" />
                   ) : (
                     <ImagePlus className="size-6 text-muted-foreground" />
                   )}
@@ -220,7 +391,7 @@ function AdminPage() {
                     className="w-full text-xs text-muted-foreground file:mr-3 file:border file:border-border file:bg-secondary file:px-3 file:py-2 file:text-[11px] file:font-bold file:uppercase file:tracking-widest file:text-foreground"
                   />
                   <p className="mt-2 text-[11px] text-muted-foreground">
-                    JPG ou PNG, até 3 MB. Proporção quadrada fica melhor na
+                    JPG ou PNG, até 5 MB. Proporção quadrada fica melhor na
                     vitrine.
                   </p>
                   {draft.image && (
@@ -359,11 +530,27 @@ function AdminPage() {
               />
             </label>
 
+            <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-foreground">
+              <input
+                type="checkbox"
+                checked={draft.active}
+                onChange={(e) => setDraft({ ...draft, active: e.target.checked })}
+              />
+              Publicar na vitrine
+            </label>
+
             <button
               type="submit"
-              className="flex w-full items-center justify-center gap-2 bg-foreground py-4 text-xs font-bold uppercase tracking-[0.2em] text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+              disabled={saving}
+              className="flex w-full items-center justify-center gap-2 bg-foreground py-4 text-xs font-bold uppercase tracking-[0.2em] text-background transition-colors hover:bg-primary hover:text-primary-foreground disabled:opacity-60"
             >
-              {editingId ? <Save className="size-4" /> : <Plus className="size-4" />}
+              {saving ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : editingId ? (
+                <Save className="size-4" />
+              ) : (
+                <Plus className="size-4" />
+              )}
               {editingId ? "Salvar alterações" : "Cadastrar produto"}
             </button>
           </form>
@@ -378,7 +565,11 @@ function AdminPage() {
               </span>
             </div>
 
-            {products.length === 0 ? (
+            {listLoading ? (
+              <div className="mt-6 flex justify-center">
+                <Loader2 className="size-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : products.length === 0 ? (
               <p className="mt-6 text-sm text-muted-foreground">
                 Nenhum produto cadastrado ainda. Use o formulário ao lado para
                 criar o primeiro.
@@ -396,6 +587,11 @@ function AdminPage() {
                     <div className="flex-1">
                       <p className="text-xs font-semibold text-foreground">
                         {product.name}
+                        {!product.active && (
+                          <span className="ml-2 text-[10px] uppercase text-muted-foreground">
+                            (rascunho)
+                          </span>
+                        )}
                       </p>
                       <p className="mt-1 text-[11px] uppercase text-muted-foreground">
                         {product.category} · {product.sizes.join(", ")} ·{" "}
@@ -426,7 +622,7 @@ function AdminPage() {
                         <button
                           type="button"
                           aria-label={`Remover ${product.name}`}
-                          onClick={() => remove(product.id)}
+                          onClick={() => void remove(product.id)}
                           className="text-muted-foreground hover:text-destructive"
                         >
                           <Trash2 className="size-4" />

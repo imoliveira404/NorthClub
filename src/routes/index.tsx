@@ -4,10 +4,17 @@ import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
-import { brasileirao, internacionais, teams } from "@/lib/products";
+import {
+  brasileirao,
+  internacionais,
+  teams,
+  type Product,
+} from "@/lib/products";
+import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
     meta: [
       { title: "Futz | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
@@ -29,8 +36,30 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  errorComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center text-sm text-muted-foreground">
+      Não conseguimos carregar a vitrine agora. Atualize a página em instantes.
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+      Página não encontrada.
+    </div>
+  ),
   component: Home,
 });
+
+const toProduct = (item: StoreProduct): Product => ({
+  id: item.id,
+  name: item.name,
+  price: item.price,
+  ...(item.oldPrice ? { oldPrice: item.oldPrice } : {}),
+  image: item.image,
+  stock: item.stock,
+  sizes: item.sizes,
+  ...(item.badge ? { badge: item.badge } : {}),
+});
+
 
 const BENEFITS = [
   { icon: PackageCheck, title: "Pronta entrega", text: "Estoque no Brasil" },
@@ -67,7 +96,27 @@ function Section({
 }
 
 function Home() {
+  const { products } = Route.useLoaderData() as { products: StoreProduct[] };
+  const dbProducts = products.map(toProduct);
+  const dbBrasileirao = products
+    .filter((p: StoreProduct) => p.category === "Brasileirão")
+    .map(toProduct);
+  const dbInternacionais = products
+    .filter((p: StoreProduct) => p.category !== "Brasileirão")
+    .map(toProduct);
+
+
+  const listBrasileirao =
+    dbProducts.length === 0
+      ? brasileirao
+      : dbBrasileirao.length > 0
+        ? dbBrasileirao
+        : dbProducts;
+  const listInternacionais =
+    dbProducts.length === 0 ? internacionais : dbInternacionais;
+
   return (
+
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
@@ -134,19 +183,22 @@ function Home() {
 
         <Section id="produtos" title="Brasileirão">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {brasileirao.map((p) => (
+            {listBrasileirao.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </Section>
 
-        <Section title="Times internacionais">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {internacionais.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </Section>
+        {listInternacionais.length > 0 && (
+          <Section title="Times internacionais">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {listInternacionais.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </Section>
+        )}
+
 
         <section className="bg-foreground">
           <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-14 md:grid-cols-[1.4fr_1fr]">

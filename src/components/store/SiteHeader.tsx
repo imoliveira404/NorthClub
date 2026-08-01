@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
+import { useSession } from "@/lib/use-session";
+
 
 const ANNOUNCEMENTS = [
   "DIRETO DO BRASIL E SEM TAXA",
@@ -23,7 +25,9 @@ const NAV = [
 
 export function SiteHeader() {
   const { count } = useCart();
+  const { user } = useSession();
   const [index, setIndex] = useState(0);
+
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -71,16 +75,32 @@ export function SiteHeader() {
           </a>
 
           <div className="flex flex-1 items-center justify-end gap-5">
-            <a
-              href="#conta"
-              className="hidden items-center gap-2 text-xs leading-tight text-foreground sm:flex"
-            >
-              <User className="size-6" />
-              <span>
-                <strong className="block">Olá! Faça login</strong>
-                <span className="text-muted-foreground">Ou cadastre-se</span>
-              </span>
-            </a>
+            {user ? (
+              <Link
+                to="/auth"
+                className="hidden items-center gap-2 text-xs leading-tight text-foreground sm:flex"
+              >
+                <User className="size-6" />
+                <span>
+                  <strong className="block">Minha conta</strong>
+                  <span className="max-w-[9rem] truncate text-muted-foreground">
+                    {user.email}
+                  </span>
+                </span>
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="hidden items-center gap-2 text-xs leading-tight text-foreground sm:flex"
+              >
+                <User className="size-6" />
+                <span>
+                  <strong className="block">Olá! Faça login</strong>
+                  <span className="text-muted-foreground">Ou cadastre-se</span>
+                </span>
+              </Link>
+            )}
+
             <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />
               <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">

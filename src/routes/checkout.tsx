@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
@@ -8,6 +8,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { useCart } from "@/lib/cart";
+import { useSession } from "@/lib/use-session";
+import { attachOrderToMe } from "@/lib/store.functions";
 import { formatBRL } from "@/lib/products";
 import { useMercadoPagoSdk } from "@/hooks/use-mercadopago";
 import {
@@ -65,6 +67,8 @@ function Checkout() {
   const { items, total, updateQuantity, removeItem, clear } = useCart();
   const publicKeyFn = useServerFn(getMercadoPagoPublicKey);
   const createOrder = useServerFn(createMercadoPagoOrder);
+  const attachOrder = useServerFn(attachOrderToMe);
+  const { user } = useSession();
 
   const { data: keyData } = useQuery({
     queryKey: ["mp-public-key"],
@@ -92,6 +96,12 @@ function Checkout() {
     cvv: "",
     installments: 1,
   });
+
+  useEffect(() => {
+    if (user?.email) {
+      setPayer((prev) => (prev.email ? prev : { ...prev, email: user.email! }));
+    }
+  }, [user]);
 
   const maxInstallments = 12;
 
@@ -147,6 +157,12 @@ function Checkout() {
           ...(method === "card" ? { installments: card.installments } : {}),
         },
       });
+
+      if (user) {
+        await attachOrder({ data: { mpOrderId: String(result.orderId) } }).catch(
+          () => undefined,
+        );
+      }
 
       if (method === "pix") {
         setPix(result.pix);
