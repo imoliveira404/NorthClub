@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { formatBRL, type Product } from "@/lib/products";
+import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[2]);
+  const { addItem } = useCart();
+
 
   return (
     <article className="group flex flex-col border border-border bg-card">

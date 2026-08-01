@@ -78,12 +78,13 @@ export function SiteHeader() {
                 <span className="text-muted-foreground">Ou cadastre-se</span>
               </span>
             </a>
-            <button className="relative text-foreground" aria-label="Carrinho">
+            <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />
               <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-                0
+                {count}
               </span>
-            </button>
+            </Link>
+
           </div>
         </div>
 
