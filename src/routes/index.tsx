@@ -19,6 +19,8 @@ type CatalogSearch = {
   cat: string;
   size: string;
   sort: string;
+  min: number;
+  max: number;
 };
 
 export const Route = createFileRoute("/")({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/")({
     cat: typeof search["cat"] === "string" ? search["cat"] : "",
     size: typeof search["size"] === "string" ? search["size"] : "",
     sort: typeof search["sort"] === "string" ? search["sort"] : "recentes",
+    min: Number(search["min"]) > 0 ? Number(search["min"]) : 0,
+    max: Number(search["max"]) > 0 ? Number(search["max"]) : 0,
   }),
   loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
