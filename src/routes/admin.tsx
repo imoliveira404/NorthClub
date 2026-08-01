@@ -346,7 +346,31 @@ function AdminPage() {
           </button>
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
+        <div className="mt-8 flex flex-wrap gap-2">
+          {(
+            [
+              { value: "produtos", label: "Produtos" },
+              { value: "pedidos", label: "Pedidos" },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => setTab(t.value)}
+              className={`border px-5 py-3 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                tab === t.value
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border text-foreground hover:border-primary"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "produtos" ? (
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
+
           <form
             onSubmit={handleSubmit}
             className="h-fit space-y-6 border border-border bg-card p-6"
