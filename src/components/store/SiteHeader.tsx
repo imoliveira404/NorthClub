@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { useSession } from "@/lib/use-session";
+import { useGuestAccount } from "@/lib/guest-account";
+
 
 
 const ANNOUNCEMENTS = [
@@ -25,10 +26,13 @@ const NAV = [
 
 export function SiteHeader() {
   const { count } = useCart();
-  const { user } = useSession();
+  const { email: guestEmail, signIn, signOut } = useGuestAccount();
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
   const [term, setTerm] = useState("");
   const navigate = useNavigate();
+
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -89,31 +93,86 @@ export function SiteHeader() {
           </a>
 
           <div className="flex flex-1 items-center justify-end gap-5">
-            {user ? (
-              <Link
-                to="/auth"
-                className="hidden items-center gap-2 text-xs leading-tight text-foreground sm:flex"
+            <div className="relative hidden sm:block">
+              <button
+                type="button"
+                onClick={() => setAccountOpen((v) => !v)}
+                className="flex items-center gap-2 text-left text-xs leading-tight text-foreground"
               >
                 <User className="size-6" />
                 <span>
-                  <strong className="block">Minha conta</strong>
-                  <span className="max-w-[9rem] truncate text-muted-foreground">
-                    {user.email}
-                  </span>
+                  {guestEmail ? (
+                    <>
+                      <strong className="block">Minha conta</strong>
+                      <span className="block max-w-[9rem] truncate text-muted-foreground">
+                        {guestEmail}
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <strong className="block">Olá! Faça login</strong>
+                      <span className="text-muted-foreground">
+                        Só com seu e-mail
+                      </span>
+                    </>
+                  )}
                 </span>
-              </Link>
-            ) : (
-              <Link
-                to="/auth"
-                className="hidden items-center gap-2 text-xs leading-tight text-foreground sm:flex"
-              >
-                <User className="size-6" />
-                <span>
-                  <strong className="block">Olá! Faça login</strong>
-                  <span className="text-muted-foreground">Ou cadastre-se</span>
-                </span>
-              </Link>
-            )}
+              </button>
+
+              {accountOpen && (
+                <div className="absolute right-0 top-full z-50 mt-3 w-72 border border-border bg-card p-4 shadow-lg">
+                  {guestEmail ? (
+                    <>
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Conectado como
+                      </p>
+                      <p className="mt-1 truncate text-sm text-foreground">
+                        {guestEmail}
+                      </p>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          signOut();
+                          setAccountOpen(false);
+                        }}
+                        className="mt-4 w-full border border-border py-2.5 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-primary"
+                      >
+                        Sair
+                      </button>
+                    </>
+                  ) : (
+                    <form
+                      onSubmit={(e) => {
+                        e.preventDefault();
+                        if (!emailInput.trim()) return;
+                        signIn(emailInput);
+                        setEmailInput("");
+                        setAccountOpen(false);
+                      }}
+                    >
+                      <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                        Entrar com e-mail
+                      </p>
+                      <input
+                        type="email"
+                        required
+                        placeholder="seu@email.com"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        className="mt-2 w-full border border-border bg-background px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary"
+                      />
+                      <button
+                        type="submit"
+                        className="mt-3 w-full bg-primary py-2.5 text-[11px] font-bold uppercase tracking-widest text-primary-foreground"
+                      >
+                        Entrar
+                      </button>
+                    </form>
+                  )}
+                </div>
+              )}
+            </div>
+
 
             <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />

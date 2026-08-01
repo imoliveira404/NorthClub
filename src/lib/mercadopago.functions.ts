@@ -130,7 +130,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
     z
       .object({
         items: z.array(itemSchema).min(1).max(30),
-        payer: payerSchema.partial({ cpf: true }),
+        payer: payerSchema.partial({ cpf: true, firstName: true, lastName: true }),
         origin: z.string().url().max(300),
       })
       .parse(data),
@@ -180,7 +180,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       await supabaseAdmin.from("orders").insert({
         email: data.payer.email,
-        full_name: `${data.payer.firstName} ${data.payer.lastName}`.trim(),
+        full_name: `${data.payer.firstName ?? ""} ${data.payer.lastName ?? ""}`.trim(),
         items: data.items,
         total,
         payment_method: "checkout_pro",
