@@ -91,6 +91,21 @@ export const createMercadoPagoOrder = createServerFn({ method: "POST" })
 
     const mpPayment = order.transactions?.payments?.[0];
 
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("orders").insert({
+        email: data.payer.email,
+        full_name: `${data.payer.firstName} ${data.payer.lastName}`.trim(),
+        items: data.items,
+        total,
+        payment_method: data.method,
+        status: mpPayment?.status ?? order.status ?? "pending",
+        mp_order_id: String(order.id),
+      });
+    } catch (error) {
+      console.error("[orders] falha ao registrar pedido", error);
+    }
+
     return {
       orderId: order.id,
       externalReference,
