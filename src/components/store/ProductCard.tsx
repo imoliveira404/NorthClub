@@ -66,11 +66,18 @@ export function ProductCard({ product }: { product: Product }) {
         </div>
 
         <button
-          onClick={() =>
+          onClick={() => {
+            addItem({
+              id: product.id,
+              name: product.name,
+              price: product.price,
+              image: product.image,
+              size,
+            });
             toast.success("Adicionado ao carrinho", {
               description: `${product.name} — tamanho ${size}`,
-            })
-          }
+            });
+          }}
           className="w-full bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
         >
           Comprar
