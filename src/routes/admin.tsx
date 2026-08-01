@@ -634,8 +634,14 @@ function AdminPage() {
               </ul>
             )}
           </section>
-        </div>
+          </div>
+        ) : (
+          <div className="mt-10">
+            <OrdersPanel />
+          </div>
+        )}
       </main>
+
 
       <SiteFooter />
       <Toaster />
