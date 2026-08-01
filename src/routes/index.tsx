@@ -121,7 +121,10 @@ function Home() {
   const navigate = useNavigate({ from: "/" });
 
   const setFilter = (patch: Partial<CatalogSearch>) => {
-    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+    void navigate({
+      search: (prev: CatalogSearch) => ({ ...prev, ...patch }),
+    });
+
   };
 
   const catalog: CatalogItem[] =
