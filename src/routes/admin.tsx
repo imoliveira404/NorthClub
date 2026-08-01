@@ -105,6 +105,8 @@ function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<"produtos" | "pedidos">("produtos");
+
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
