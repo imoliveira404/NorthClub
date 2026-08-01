@@ -87,7 +87,7 @@ const rowToProduct = (row: ProductRow): AdminProduct => ({
   stock: Number(row.stock ?? 0),
   sizes: row.sizes ?? [],
   badge: row.badge ?? undefined,
-  category: row.category ?? "Brasileirão",
+  category: row.category ?? "Time brasileiro",
   description: row.description ?? "",
   image: row.image_url ?? "",
   active: row.active,

@@ -2,7 +2,20 @@ const STORAGE_KEY = "futz-admin-products";
 
 export const SIZE_OPTIONS = ["P", "M", "G", "GG", "2XL", "3GG"];
 
-export const CATEGORIES = ["Brasileirão", "Internacionais", "Retrô", "Treino"];
+export const KID_SIZE_OPTIONS = ["16", "18", "20", "22", "24", "26", "28"];
+
+export const CATEGORIES = [
+  "Time brasileiro",
+  "Europeu",
+  "Seleção",
+  "Retro",
+  "Jogador",
+  "Feminino",
+  "Infantil",
+  "Conjunto adulto",
+  "Agasalho conjunto",
+  "Calção oferta",
+];
 
 export type AdminProduct = {
   id: string;
@@ -33,7 +46,7 @@ export const emptyDraft = (): AdminProductDraft => ({
   stock: 0,
   sizes: [],
   badge: "",
-  category: "Brasileirão",
+  category: "Time brasileiro",
   description: "",
   image: "",
   active: true,

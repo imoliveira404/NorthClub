@@ -59,7 +59,7 @@ export const listStoreProducts = createServerFn({ method: "GET" }).handler(
       stock: Number(row.stock ?? 0),
       sizes: (row.sizes as string[]) ?? [],
       badge: (row.badge as string | null) ?? null,
-      category: (row.category as string) ?? "Brasileirão",
+      category: (row.category as string) ?? "Time brasileiro",
       description: (row.description as string) ?? "",
     }));
   },

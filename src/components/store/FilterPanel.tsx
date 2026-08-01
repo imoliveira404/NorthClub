@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, SlidersHorizontal, X } from "lucide-react";
-import { CATEGORIES, SIZE_OPTIONS } from "@/lib/admin-products";
 import { formatBRL } from "@/lib/products";
 
 export type CatalogFilters = {
@@ -20,22 +19,24 @@ const chip = (active: boolean) =>
   }`;
 
 const PRICE_RANGES = [
-  { label: "Até R$ 70", min: 0, max: 70 },
-  { label: "R$ 70 - R$ 100", min: 70, max: 100 },
+  { label: "Até R$ 100", min: 0, max: 100 },
   { label: "R$ 100 - R$ 150", min: 100, max: 150 },
-  { label: "Acima de R$ 150", min: 150, max: 0 },
+  { label: "R$ 150 - R$ 200", min: 150, max: 200 },
+  { label: "Acima de R$ 200", min: 200, max: 0 },
 ];
 
 export function FilterPanel({
   filters,
-  brands,
+  categories,
+  sizes,
   onChange,
   onClear,
   activeCount,
   resultCount,
 }: {
   filters: CatalogFilters;
-  brands: string[];
+  categories: string[];
+  sizes: string[];
   onChange: (patch: Partial<CatalogFilters>) => void;
   onClear: () => void;
   activeCount: number;
@@ -85,7 +86,7 @@ export function FilterPanel({
               <button type="button" onClick={() => onChange({ cat: "" })} className={chip(!cat)}>
                 Todas
               </button>
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <button
                   key={c}
                   type="button"
@@ -106,7 +107,7 @@ export function FilterPanel({
               <button type="button" onClick={() => onChange({ size: "" })} className={chip(!size)}>
                 Todos
               </button>
-              {SIZE_OPTIONS.map((s) => (
+              {sizes.map((s) => (
                 <button
                   key={s}
                   type="button"
@@ -167,35 +168,6 @@ export function FilterPanel({
               </p>
             )}
           </div>
-
-          {brands.length > 0 && (
-            <div>
-              <p className="mb-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Marca / Coleção
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  onClick={() => onChange({ q: "" })}
-                  className={chip(!filters.q)}
-                >
-                  Todas
-                </button>
-                {brands.map((b) => (
-                  <button
-                    key={b}
-                    type="button"
-                    onClick={() =>
-                      onChange({ q: filters.q.toLowerCase() === b.toLowerCase() ? "" : b })
-                    }
-                    className={chip(filters.q.toLowerCase() === b.toLowerCase())}
-                  >
-                    {b}
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           <div className="flex items-center justify-between border-t border-border pt-4">
             <button
