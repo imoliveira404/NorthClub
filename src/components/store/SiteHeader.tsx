@@ -34,7 +34,7 @@ export function SiteHeader() {
     e.preventDefault();
     void navigate({
       to: "/",
-      search: { q: term.trim(), cat: "", size: "", sort: "recentes" },
+      search: { q: term.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0 },
       hash: "produtos",
     });
     setOpen(false);

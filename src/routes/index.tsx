@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BadgeCheck, PackageCheck, ShieldCheck, Truck, X } from "lucide-react";
+import { BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
+import { FilterPanel } from "@/components/store/FilterPanel";
 import {
   brasileirao,
   internacionais,
@@ -11,7 +12,6 @@ import {
   type Product,
 } from "@/lib/products";
 import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
-import { CATEGORIES, SIZE_OPTIONS } from "@/lib/admin-products";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
 type CatalogSearch = {
@@ -19,6 +19,8 @@ type CatalogSearch = {
   cat: string;
   size: string;
   sort: string;
+  min: number;
+  max: number;
 };
 
 export const Route = createFileRoute("/")({
@@ -27,6 +29,8 @@ export const Route = createFileRoute("/")({
     cat: typeof search["cat"] === "string" ? search["cat"] : "",
     size: typeof search["size"] === "string" ? search["size"] : "",
     sort: typeof search["sort"] === "string" ? search["sort"] : "recentes",
+    min: Number(search["min"]) > 0 ? Number(search["min"]) : 0,
+    max: Number(search["max"]) > 0 ? Number(search["max"]) : 0,
   }),
   loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
@@ -117,14 +121,13 @@ const chip = (active: boolean) =>
 
 function Home() {
   const { products } = Route.useLoaderData() as { products: StoreProduct[] };
-  const { q, cat, size, sort } = Route.useSearch();
+  const { q, cat, size, sort, min, max } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
 
   const setFilter = (patch: Partial<CatalogSearch>) => {
     void navigate({
       search: (prev: CatalogSearch) => ({ ...prev, ...patch }),
     });
-
   };
 
   const catalog: CatalogItem[] =
@@ -135,6 +138,8 @@ function Home() {
     .filter((item) => {
       if (cat && item.category !== cat) return false;
       if (size && !item.sizes.includes(size)) return false;
+      if (min > 0 && item.price < min) return false;
+      if (max > 0 && item.price > max) return false;
       if (term) {
         const haystack = `${item.name} ${item.category}`.toLowerCase();
         if (!haystack.includes(term)) return false;
@@ -148,7 +153,8 @@ function Home() {
       return a.createdIndex - b.createdIndex;
     });
 
-  const hasFilters = Boolean(term || cat || size) || sort !== "recentes";
+  const activeCount =
+    (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -226,81 +232,41 @@ function Home() {
                 {term ? ` para "${q.trim()}"` : ""}
               </p>
             </div>
-            <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-              Ordenar
-              <select
-                value={sort}
-                onChange={(e) => setFilter({ sort: e.target.value })}
-                className="ml-2 border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground outline-none focus:border-primary"
-              >
-                {SORTS.map((s) => (
-                  <option key={s.value} value={s.value}>
-                    {s.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <div className="mb-8 space-y-4 border border-border bg-card p-5">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Categoria
-              </span>
-              <button
-                type="button"
-                onClick={() => setFilter({ cat: "" })}
-                className={chip(!cat)}
-              >
-                Todas
-              </button>
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  onClick={() => setFilter({ cat: c })}
-                  className={chip(cat === c)}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Tamanho
-              </span>
-              <button
-                type="button"
-                onClick={() => setFilter({ size: "" })}
-                className={chip(!size)}
-              >
-                Todos
-              </button>
-              {SIZE_OPTIONS.map((s) => (
-                <button
-                  key={s}
-                  type="button"
-                  onClick={() => setFilter({ size: size === s ? "" : s })}
-                  className={chip(size === s)}
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-
-            {hasFilters && (
-              <button
-                type="button"
-                onClick={() =>
-                  setFilter({ q: "", cat: "", size: "", sort: "recentes" })
+            <div className="flex flex-wrap items-center gap-3">
+              <FilterPanel
+                filters={{ q, cat, size, sort, min, max }}
+                brands={teams.slice(0, 8)}
+                onChange={setFilter}
+                onClear={() =>
+                  setFilter({
+                    q: "",
+                    cat: "",
+                    size: "",
+                    sort: "recentes",
+                    min: 0,
+                    max: 0,
+                  })
                 }
-                className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-destructive"
-              >
-                <X className="size-3" /> Limpar filtros
-              </button>
-            )}
+                activeCount={activeCount}
+                resultCount={filtered.length}
+              />
+              <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                Ordenar
+                <select
+                  value={sort}
+                  onChange={(e) => setFilter({ sort: e.target.value })}
+                  className="ml-2 border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground outline-none focus:border-primary"
+                >
+                  {SORTS.map((s) => (
+                    <option key={s.value} value={s.value}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
           </div>
+
 
           {filtered.length === 0 ? (
             <p className="py-10 text-center text-sm text-muted-foreground">
