@@ -121,14 +121,13 @@ const chip = (active: boolean) =>
 
 function Home() {
   const { products } = Route.useLoaderData() as { products: StoreProduct[] };
-  const { q, cat, size, sort } = Route.useSearch();
+  const { q, cat, size, sort, min, max } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
 
   const setFilter = (patch: Partial<CatalogSearch>) => {
     void navigate({
       search: (prev: CatalogSearch) => ({ ...prev, ...patch }),
     });
-
   };
 
   const catalog: CatalogItem[] =
@@ -139,6 +138,8 @@ function Home() {
     .filter((item) => {
       if (cat && item.category !== cat) return false;
       if (size && !item.sizes.includes(size)) return false;
+      if (min > 0 && item.price < min) return false;
+      if (max > 0 && item.price > max) return false;
       if (term) {
         const haystack = `${item.name} ${item.category}`.toLowerCase();
         if (!haystack.includes(term)) return false;
@@ -152,7 +153,8 @@ function Home() {
       return a.createdIndex - b.createdIndex;
     });
 
-  const hasFilters = Boolean(term || cat || size) || sort !== "recentes";
+  const activeCount =
+    (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-background">
