@@ -96,14 +96,15 @@ function Section({
 }
 
 function Home() {
-  const { products } = Route.useLoaderData();
+  const { products } = Route.useLoaderData() as { products: StoreProduct[] };
   const dbProducts = products.map(toProduct);
   const dbBrasileirao = products
-    .filter((p) => p.category === "Brasileirão")
+    .filter((p: StoreProduct) => p.category === "Brasileirão")
     .map(toProduct);
   const dbInternacionais = products
-    .filter((p) => p.category !== "Brasileirão")
+    .filter((p: StoreProduct) => p.category !== "Brasileirão")
     .map(toProduct);
+
 
   const listBrasileirao =
     dbProducts.length === 0
