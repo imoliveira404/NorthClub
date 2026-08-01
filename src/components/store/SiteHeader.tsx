@@ -25,10 +25,13 @@ const NAV = [
 
 export function SiteHeader() {
   const { count } = useCart();
-  const { user } = useSession();
+  const { email: guestEmail, signIn, signOut } = useGuestAccount();
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
   const [term, setTerm] = useState("");
   const navigate = useNavigate();
+
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
