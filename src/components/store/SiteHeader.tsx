@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { useSession } from "@/lib/use-session";
+import { useGuestAccount } from "@/lib/guest-account";
+
 
 
 const ANNOUNCEMENTS = [
