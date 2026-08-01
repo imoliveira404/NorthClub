@@ -4,7 +4,7 @@ import { formatBRL, type Product } from "@/lib/products";
 import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
-  const [size, setSize] = useState(product.sizes[2]);
+  const [size, setSize] = useState(product.sizes[2] ?? product.sizes[0] ?? "M");
   const { addItem } = useCart();
 
 
