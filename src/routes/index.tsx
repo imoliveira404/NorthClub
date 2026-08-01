@@ -183,19 +183,22 @@ function Home() {
 
         <Section id="produtos" title="Brasileirão">
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {brasileirao.map((p) => (
+            {listBrasileirao.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
         </Section>
 
-        <Section title="Times internacionais">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {internacionais.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </Section>
+        {listInternacionais.length > 0 && (
+          <Section title="Times internacionais">
+            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+              {listInternacionais.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </Section>
+        )}
+
 
         <section className="bg-foreground">
           <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-14 md:grid-cols-[1.4fr_1fr]">
