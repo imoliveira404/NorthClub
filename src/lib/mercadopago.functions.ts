@@ -130,7 +130,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
     z
       .object({
         items: z.array(itemSchema).min(1).max(30),
-        payer: payerSchema.partial({ cpf: true }),
+        payer: payerSchema.partial({ cpf: true, firstName: true, lastName: true }),
         origin: z.string().url().max(300),
       })
       .parse(data),
