@@ -8,10 +8,15 @@ import { FilterPanel } from "@/components/store/FilterPanel";
 import {
   brasileirao,
   internacionais,
-  teams,
   type Product,
 } from "@/lib/products";
+import {
+  CATEGORIES,
+  SIZE_OPTIONS,
+  KID_SIZE_OPTIONS,
+} from "@/lib/admin-products";
 import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
+import { whatsappLink } from "@/lib/whatsapp";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
 type CatalogSearch = {
@@ -88,12 +93,12 @@ const toCatalogItem = (
 const fallbackCatalog: CatalogItem[] = [
   ...brasileirao.map((p, i) => ({
     ...p,
-    category: "Brasileirão",
+    category: "Time brasileiro",
     createdIndex: i,
   })),
   ...internacionais.map((p, i) => ({
     ...p,
-    category: "Internacionais",
+    category: "Europeu",
     createdIndex: brasileirao.length + i,
   })),
 ];
@@ -132,6 +137,23 @@ function Home() {
 
   const catalog: CatalogItem[] =
     products.length > 0 ? products.map(toCatalogItem) : fallbackCatalog;
+
+  const availableCategories = CATEGORIES.filter((c) =>
+    catalog.some((item) => item.category === c),
+  ).concat(
+    [...new Set(catalog.map((i) => i.category))].filter(
+      (c) => c && !CATEGORIES.includes(c),
+    ),
+  );
+
+  const sizeOrder = [...SIZE_OPTIONS, ...KID_SIZE_OPTIONS];
+  const availableSizes = [...new Set(catalog.flatMap((i) => i.sizes))].sort(
+    (a, b) => {
+      const ia = sizeOrder.indexOf(a);
+      const ib = sizeOrder.indexOf(b);
+      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+    },
+  );
 
   const term = q.trim().toLowerCase();
   const filtered = catalog
@@ -206,20 +228,22 @@ function Home() {
 
         <section className="mx-auto max-w-7xl px-4 py-12">
           <h2 className="mb-6 font-display text-2xl uppercase tracking-tight text-foreground">
-            Busque pelo seu time
+            Navegue por categoria
           </h2>
           <div className="flex flex-wrap gap-2">
-            {teams.map((team) => (
-              <a
-                key={team}
-                href={`/?q=${encodeURIComponent(team)}#produtos`}
-                className={chip(term === team.toLowerCase())}
+            {availableCategories.map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setFilter({ cat: cat === c ? "" : c })}
+                className={chip(cat === c)}
               >
-                {team}
-              </a>
+                {c}
+              </button>
             ))}
           </div>
         </section>
+
 
         <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
@@ -235,7 +259,8 @@ function Home() {
             <div className="flex flex-wrap items-center gap-3">
               <FilterPanel
                 filters={{ q, cat, size, sort, min, max }}
-                brands={teams.slice(0, 8)}
+                categories={availableCategories}
+                sizes={availableSizes}
                 onChange={setFilter}
                 onClear={() =>
                   setFilter({
@@ -293,11 +318,16 @@ function Home() {
               </p>
             </div>
             <a
-              href="#produtos"
-              className="w-fit bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground"
+              href={whatsappLink(
+                "Olá! Quero saber mais sobre revenda de camisas na Futz.",
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-fit bg-[#25D366] px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black"
             >
               Falar no WhatsApp
             </a>
+
           </div>
         </section>
       </main>
