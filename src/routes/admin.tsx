@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
+import { OrdersPanel } from "@/components/admin/OrdersPanel";
+
 import { formatBRL } from "@/lib/products";
 import { supabase } from "@/integrations/supabase/client";
 import { useSession } from "@/lib/use-session";
@@ -105,6 +107,8 @@ function AdminPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [tab, setTab] = useState<"produtos" | "pedidos">("produtos");
+
   const fileRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -346,7 +350,31 @@ function AdminPage() {
           </button>
         </div>
 
-        <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
+        <div className="mt-8 flex flex-wrap gap-2">
+          {(
+            [
+              { value: "produtos", label: "Produtos" },
+              { value: "pedidos", label: "Pedidos" },
+            ] as const
+          ).map((t) => (
+            <button
+              key={t.value}
+              type="button"
+              onClick={() => setTab(t.value)}
+              className={`border px-5 py-3 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+                tab === t.value
+                  ? "border-primary bg-primary text-primary-foreground"
+                  : "border-border text-foreground hover:border-primary"
+              }`}
+            >
+              {t.label}
+            </button>
+          ))}
+        </div>
+
+        {tab === "produtos" ? (
+          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
+
           <form
             onSubmit={handleSubmit}
             className="h-fit space-y-6 border border-border bg-card p-6"
@@ -634,8 +662,14 @@ function AdminPage() {
               </ul>
             )}
           </section>
-        </div>
+          </div>
+        ) : (
+          <div className="mt-10">
+            <OrdersPanel />
+          </div>
+        )}
       </main>
+
 
       <SiteFooter />
       <Toaster />
