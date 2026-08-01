@@ -1,5 +1,5 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { BadgeCheck, PackageCheck, ShieldCheck, Truck, X } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
@@ -11,9 +11,23 @@ import {
   type Product,
 } from "@/lib/products";
 import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
+import { CATEGORIES, SIZE_OPTIONS } from "@/lib/admin-products";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
+type CatalogSearch = {
+  q: string;
+  cat: string;
+  size: string;
+  sort: string;
+};
+
 export const Route = createFileRoute("/")({
+  validateSearch: (search: Record<string, unknown>): CatalogSearch => ({
+    q: typeof search["q"] === "string" ? search["q"].slice(0, 80) : "",
+    cat: typeof search["cat"] === "string" ? search["cat"] : "",
+    size: typeof search["size"] === "string" ? search["size"] : "",
+    sort: typeof search["sort"] === "string" ? search["sort"] : "recentes",
+  }),
   loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
     meta: [
@@ -49,7 +63,12 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-const toProduct = (item: StoreProduct): Product => ({
+type CatalogItem = Product & { category: string; createdIndex: number };
+
+const toCatalogItem = (
+  item: StoreProduct,
+  index: number,
+): CatalogItem => ({
   id: item.id,
   name: item.name,
   price: item.price,
@@ -58,8 +77,29 @@ const toProduct = (item: StoreProduct): Product => ({
   stock: item.stock,
   sizes: item.sizes,
   ...(item.badge ? { badge: item.badge } : {}),
+  category: item.category,
+  createdIndex: index,
 });
 
+const fallbackCatalog: CatalogItem[] = [
+  ...brasileirao.map((p, i) => ({
+    ...p,
+    category: "Brasileirão",
+    createdIndex: i,
+  })),
+  ...internacionais.map((p, i) => ({
+    ...p,
+    category: "Internacionais",
+    createdIndex: brasileirao.length + i,
+  })),
+];
+
+const SORTS = [
+  { value: "recentes", label: "Mais recentes" },
+  { value: "menor-preco", label: "Menor preço" },
+  { value: "maior-preco", label: "Maior preço" },
+  { value: "nome", label: "A-Z" },
+];
 
 const BENEFITS = [
   { icon: PackageCheck, title: "Pronta entrega", text: "Estoque no Brasil" },
@@ -68,55 +108,46 @@ const BENEFITS = [
   { icon: ShieldCheck, title: "Compra segura", text: "Troca facilitada" },
 ];
 
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id?: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="mx-auto max-w-7xl px-4 py-14">
-      <div className="mb-8 flex items-end justify-between gap-4">
-        <h2 className="font-display text-3xl uppercase tracking-tight text-foreground md:text-4xl">
-          {title}
-        </h2>
-        <a
-          href="#produtos"
-          className="shrink-0 border-b-2 border-primary pb-1 text-xs font-bold uppercase tracking-widest text-foreground"
-        >
-          Ver tudo
-        </a>
-      </div>
-      {children}
-    </section>
-  );
-}
+const chip = (active: boolean) =>
+  `border px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+    active
+      ? "border-primary bg-primary text-primary-foreground"
+      : "border-border text-foreground hover:border-primary hover:text-primary"
+  }`;
 
 function Home() {
   const { products } = Route.useLoaderData() as { products: StoreProduct[] };
-  const dbProducts = products.map(toProduct);
-  const dbBrasileirao = products
-    .filter((p: StoreProduct) => p.category === "Brasileirão")
-    .map(toProduct);
-  const dbInternacionais = products
-    .filter((p: StoreProduct) => p.category !== "Brasileirão")
-    .map(toProduct);
+  const { q, cat, size, sort } = Route.useSearch();
+  const navigate = useNavigate({ from: "/" });
 
+  const setFilter = (patch: Partial<CatalogSearch>) => {
+    void navigate({ search: (prev) => ({ ...prev, ...patch }) });
+  };
 
-  const listBrasileirao =
-    dbProducts.length === 0
-      ? brasileirao
-      : dbBrasileirao.length > 0
-        ? dbBrasileirao
-        : dbProducts;
-  const listInternacionais =
-    dbProducts.length === 0 ? internacionais : dbInternacionais;
+  const catalog: CatalogItem[] =
+    products.length > 0 ? products.map(toCatalogItem) : fallbackCatalog;
+
+  const term = q.trim().toLowerCase();
+  const filtered = catalog
+    .filter((item) => {
+      if (cat && item.category !== cat) return false;
+      if (size && !item.sizes.includes(size)) return false;
+      if (term) {
+        const haystack = `${item.name} ${item.category}`.toLowerCase();
+        if (!haystack.includes(term)) return false;
+      }
+      return true;
+    })
+    .sort((a, b) => {
+      if (sort === "menor-preco") return a.price - b.price;
+      if (sort === "maior-preco") return b.price - a.price;
+      if (sort === "nome") return a.name.localeCompare(b.name, "pt-BR");
+      return a.createdIndex - b.createdIndex;
+    });
+
+  const hasFilters = Boolean(term || cat || size) || sort !== "recentes";
 
   return (
-
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
@@ -172,8 +203,8 @@ function Home() {
             {teams.map((team) => (
               <a
                 key={team}
-                href="#produtos"
-                className="border border-border px-4 py-2 text-xs font-bold uppercase tracking-wide text-foreground transition-colors hover:border-primary hover:text-primary"
+                href={`/?q=${encodeURIComponent(team)}#produtos`}
+                className={chip(term === team.toLowerCase())}
               >
                 {team}
               </a>
@@ -181,24 +212,105 @@ function Home() {
           </div>
         </section>
 
-        <Section id="produtos" title="Brasileirão">
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {listBrasileirao.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
+        <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
+          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+            <div>
+              <h2 className="font-display text-3xl uppercase tracking-tight text-foreground md:text-4xl">
+                Produtos
+              </h2>
+              <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                {filtered.length} camisa(s) encontradas
+                {term ? ` para "${q.trim()}"` : ""}
+              </p>
+            </div>
+            <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+              Ordenar
+              <select
+                value={sort}
+                onChange={(e) => setFilter({ sort: e.target.value })}
+                className="ml-2 border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground outline-none focus:border-primary"
+              >
+                {SORTS.map((s) => (
+                  <option key={s.value} value={s.value}>
+                    {s.label}
+                  </option>
+                ))}
+              </select>
+            </label>
           </div>
-        </Section>
 
-        {listInternacionais.length > 0 && (
-          <Section title="Times internacionais">
+          <div className="mb-8 space-y-4 border border-border bg-card p-5">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                Categoria
+              </span>
+              <button
+                type="button"
+                onClick={() => setFilter({ cat: "" })}
+                className={chip(!cat)}
+              >
+                Todas
+              </button>
+              {CATEGORIES.map((c) => (
+                <button
+                  key={c}
+                  type="button"
+                  onClick={() => setFilter({ cat: c })}
+                  className={chip(cat === c)}
+                >
+                  {c}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="mr-1 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                Tamanho
+              </span>
+              <button
+                type="button"
+                onClick={() => setFilter({ size: "" })}
+                className={chip(!size)}
+              >
+                Todos
+              </button>
+              {SIZE_OPTIONS.map((s) => (
+                <button
+                  key={s}
+                  type="button"
+                  onClick={() => setFilter({ size: size === s ? "" : s })}
+                  className={chip(size === s)}
+                >
+                  {s}
+                </button>
+              ))}
+            </div>
+
+            {hasFilters && (
+              <button
+                type="button"
+                onClick={() =>
+                  setFilter({ q: "", cat: "", size: "", sort: "recentes" })
+                }
+                className="flex items-center gap-1 text-[11px] font-bold uppercase tracking-widest text-destructive"
+              >
+                <X className="size-3" /> Limpar filtros
+              </button>
+            )}
+          </div>
+
+          {filtered.length === 0 ? (
+            <p className="py-10 text-center text-sm text-muted-foreground">
+              Nenhuma camisa encontrada com esses filtros. Tente outra busca.
+            </p>
+          ) : (
             <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {listInternacionais.map((p) => (
+              {filtered.map((p) => (
                 <ProductCard key={p.id} product={p} />
               ))}
             </div>
-          </Section>
-        )}
-
+          )}
+        </section>
 
         <section className="bg-foreground">
           <div className="mx-auto grid max-w-7xl items-center gap-6 px-4 py-14 md:grid-cols-[1.4fr_1fr]">
