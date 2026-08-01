@@ -1,9 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BadgeCheck, PackageCheck, ShieldCheck, Truck, X } from "lucide-react";
+import { BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
+import { FilterPanel } from "@/components/store/FilterPanel";
 import {
   brasileirao,
   internacionais,
@@ -11,7 +12,6 @@ import {
   type Product,
 } from "@/lib/products";
 import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
-import { CATEGORIES, SIZE_OPTIONS } from "@/lib/admin-products";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
 type CatalogSearch = {
