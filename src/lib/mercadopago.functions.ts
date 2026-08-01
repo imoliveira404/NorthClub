@@ -121,6 +121,84 @@ export const createMercadoPagoOrder = createServerFn({ method: "POST" })
     };
   });
 
+/**
+ * Checkout Pro: cria uma preferência e devolve a URL oficial do Mercado Pago,
+ * onde o cliente escolhe cartão, Pix ou boleto no ambiente do próprio MP.
+ */
+export const createMercadoPagoPreference = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        items: z.array(itemSchema).min(1).max(30),
+        payer: payerSchema.partial({ cpf: true }),
+        origin: z.string().url().max(300),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => {
+    const { mpRequest } = await import("@/lib/mercadopago.server");
+
+    const total = data.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
+    const externalReference = `futz-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+
+    const preference = await mpRequest<{
+      id: string;
+      init_point?: string;
+      sandbox_init_point?: string;
+    }>("/checkout/preferences", {
+      method: "POST",
+      idempotencyKey: externalReference,
+      body: {
+        external_reference: externalReference,
+        statement_descriptor: "FUTZ",
+        items: data.items.map((item) => ({
+          id: item.id,
+          title: `${item.name} (${item.size})`,
+          quantity: item.quantity,
+          unit_price: item.price,
+          currency_id: "BRL",
+        })),
+        payer: {
+          email: data.payer.email,
+          name: data.payer.firstName,
+          surname: data.payer.lastName,
+          ...(data.payer.cpf
+            ? { identification: { type: "CPF", number: data.payer.cpf } }
+            : {}),
+        },
+        back_urls: {
+          success: `${data.origin}/checkout?status=success`,
+          pending: `${data.origin}/checkout?status=pending`,
+          failure: `${data.origin}/checkout?status=failure`,
+        },
+        auto_return: "approved",
+        notification_url: `${data.origin}/api/public/mercadopago-webhook`,
+      },
+    });
+
+    try {
+      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+      await supabaseAdmin.from("orders").insert({
+        email: data.payer.email,
+        full_name: `${data.payer.firstName} ${data.payer.lastName}`.trim(),
+        items: data.items,
+        total,
+        payment_method: "checkout_pro",
+        status: "pending",
+        mp_order_id: String(preference.id),
+      });
+    } catch (error) {
+      console.error("[orders] falha ao registrar pedido", error);
+    }
+
+    return {
+      preferenceId: preference.id,
+      externalReference,
+      checkoutUrl: preference.init_point ?? preference.sandbox_init_point ?? null,
+      total,
+    };
+  });
+
 export const getMercadoPagoOrder = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z.object({ orderId: z.string().min(3).max(64) }).parse(data),
