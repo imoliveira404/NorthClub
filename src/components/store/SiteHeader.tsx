@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { useCart } from "@/lib/cart";
 
 const ANNOUNCEMENTS = [
   "DIRETO DO BRASIL E SEM TAXA",
@@ -20,6 +22,7 @@ const NAV = [
 ];
 
 export function SiteHeader() {
+  const { count } = useCart();
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
 
