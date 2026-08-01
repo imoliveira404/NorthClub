@@ -96,7 +96,26 @@ function Section({
 }
 
 function Home() {
+  const { products } = Route.useLoaderData();
+  const dbProducts = products.map(toProduct);
+  const dbBrasileirao = products
+    .filter((p) => p.category === "Brasileirão")
+    .map(toProduct);
+  const dbInternacionais = products
+    .filter((p) => p.category !== "Brasileirão")
+    .map(toProduct);
+
+  const listBrasileirao =
+    dbProducts.length === 0
+      ? brasileirao
+      : dbBrasileirao.length > 0
+        ? dbBrasileirao
+        : dbProducts;
+  const listInternacionais =
+    dbProducts.length === 0 ? internacionais : dbInternacionais;
+
   return (
+
     <div className="min-h-screen bg-background">
       <SiteHeader />
 
