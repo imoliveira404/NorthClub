@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { MpOrder } from "@/lib/mercadopago.server";
 
 const itemSchema = z.object({
   id: z.string().min(1).max(64),
@@ -34,7 +35,7 @@ export const getMercadoPagoPublicKey = createServerFn({ method: "GET" }).handler
 export const createMercadoPagoOrder = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))
   .handler(async ({ data }) => {
-    const { mpRequest, type MpOrder } = await import("@/lib/mercadopago.server");
+    const { mpRequest } = await import("@/lib/mercadopago.server");
 
     const total = data.items.reduce((sum, i) => sum + i.price * i.quantity, 0);
     const externalReference = `futz-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
@@ -110,7 +111,7 @@ export const getMercadoPagoOrder = createServerFn({ method: "POST" })
     z.object({ orderId: z.string().min(3).max(64) }).parse(data),
   )
   .handler(async ({ data }) => {
-    const { mpRequest, type MpOrder } = await import("@/lib/mercadopago.server");
+    const { mpRequest } = await import("@/lib/mercadopago.server");
     const order = await mpRequest<MpOrder>(`/v1/orders/${data.orderId}`, {
       method: "GET",
     });
