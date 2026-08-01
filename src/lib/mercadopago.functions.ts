@@ -180,7 +180,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
       const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
       await supabaseAdmin.from("orders").insert({
         email: data.payer.email,
-        full_name: `${data.payer.firstName} ${data.payer.lastName}`.trim(),
+        full_name: `${data.payer.firstName ?? ""} ${data.payer.lastName ?? ""}`.trim(),
         items: data.items,
         total,
         payment_method: "checkout_pro",
