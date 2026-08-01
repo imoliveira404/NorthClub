@@ -16,7 +16,13 @@ export type AdminProduct = {
   createdAt: string;
 };
 
-export type AdminProductDraft = Omit<AdminProduct, "id" | "createdAt">;
+export type AdminProductDraft = Omit<
+  AdminProduct,
+  "id" | "createdAt" | "oldPrice" | "badge"
+> & {
+  oldPrice?: number | undefined;
+  badge?: string | undefined;
+};
 
 export const emptyDraft = (): AdminProductDraft => ({
   name: "",
