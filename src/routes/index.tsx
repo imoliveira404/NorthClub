@@ -4,10 +4,17 @@ import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
-import { brasileirao, internacionais, teams } from "@/lib/products";
+import {
+  brasileirao,
+  internacionais,
+  teams,
+  type Product,
+} from "@/lib/products";
+import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
 export const Route = createFileRoute("/")({
+  loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
     meta: [
       { title: "Futz | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
@@ -29,8 +36,30 @@ export const Route = createFileRoute("/")({
       { name: "twitter:card", content: "summary_large_image" },
     ],
   }),
+  errorComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center text-sm text-muted-foreground">
+      Não conseguimos carregar a vitrine agora. Atualize a página em instantes.
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground">
+      Página não encontrada.
+    </div>
+  ),
   component: Home,
 });
+
+const toProduct = (item: StoreProduct): Product => ({
+  id: item.id,
+  name: item.name,
+  price: item.price,
+  ...(item.oldPrice ? { oldPrice: item.oldPrice } : {}),
+  image: item.image,
+  stock: item.stock,
+  sizes: item.sizes,
+  ...(item.badge ? { badge: item.badge } : {}),
+});
+
 
 const BENEFITS = [
   { icon: PackageCheck, title: "Pronta entrega", text: "Estoque no Brasil" },
