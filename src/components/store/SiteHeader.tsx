@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useSession } from "@/lib/use-session";
@@ -27,6 +27,18 @@ export function SiteHeader() {
   const { count } = useCart();
   const { user } = useSession();
   const [index, setIndex] = useState(0);
+  const [term, setTerm] = useState("");
+  const navigate = useNavigate();
+
+  const submitSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    void navigate({
+      to: "/",
+      search: { q: term.trim(), cat: "", size: "", sort: "recentes" },
+      hash: "produtos",
+    });
+    setOpen(false);
+  };
 
   const [open, setOpen] = useState(false);
 
@@ -56,12 +68,14 @@ export function SiteHeader() {
 
           <form
             className="relative hidden flex-1 lg:block"
-            onSubmit={(e) => e.preventDefault()}
+            onSubmit={submitSearch}
           >
             <input
               type="search"
               placeholder="O que você está buscando?"
               aria-label="Buscar produtos"
+              value={term}
+              onChange={(e) => setTerm(e.target.value)}
               className="w-full max-w-md rounded-none border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
             />
             <Search className="pointer-events-none absolute left-[calc(28rem-2.25rem)] top-2.5 hidden size-5 text-muted-foreground xl:block" />
@@ -129,6 +143,16 @@ export function SiteHeader() {
 
           {open && (
             <div className="flex flex-col px-4 pb-4 lg:hidden">
+              <form onSubmit={submitSearch} className="py-3">
+                <input
+                  type="search"
+                  placeholder="O que você está buscando?"
+                  aria-label="Buscar produtos"
+                  value={term}
+                  onChange={(e) => setTerm(e.target.value)}
+                  className="w-full border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+                />
+              </form>
               {NAV.map((item) => (
                 <a
                   key={item}
