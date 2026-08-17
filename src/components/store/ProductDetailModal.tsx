@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
-import { Check, ShieldCheck, ShoppingBag, Sparkles, Truck, X } from "lucide-react";
+import { ShieldCheck, ShoppingBag, Sparkles, Truck, X } from "lucide-react";
 import { toast } from "sonner";
 import { useCart } from "@/lib/cart";
 import { formatBRL, type Product } from "@/lib/products";
@@ -58,147 +58,150 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-2 sm:p-4 md:p-6 overflow-y-auto animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-3xl bg-card border border-border shadow-2xl p-4 sm:p-6 my-auto overflow-hidden text-foreground animate-in zoom-in-95 duration-200"
+        className="relative flex flex-col w-full max-w-4xl lg:max-w-5xl max-h-[92vh] sm:max-h-[90vh] bg-card border border-border shadow-2xl overflow-hidden text-foreground animate-in zoom-in-95 duration-200 my-auto rounded-none"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* Botão Fechar */}
+        {/* Botão Fechar "X" de Alta Visibilidade */}
         <button
           type="button"
           onClick={onClose}
-          className="absolute right-3 top-3 z-10 p-2 text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute right-3 top-3 z-30 flex size-10 items-center justify-center rounded-full bg-background/90 text-foreground border border-border shadow-lg transition-all hover:bg-primary hover:text-primary-foreground hover:scale-110 active:scale-95"
           aria-label="Fechar detalhes"
         >
-          <X className="size-6" />
+          <X className="size-6 stroke-[2.5]" />
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-          {/* Lado Esquerdo: Imagem do Produto */}
-          <div className="relative overflow-hidden bg-secondary border border-border rounded-none">
-            {product.badge && (
-              <span className="absolute left-3 top-3 z-10 bg-primary px-2.5 py-1 text-[11px] font-bold uppercase tracking-wider text-primary-foreground">
-                {product.badge}
-              </span>
-            )}
-            <img
-              src={product.image}
-              alt={product.name}
-              className="aspect-square w-full object-cover transition-transform duration-500 hover:scale-105"
-            />
-          </div>
-
-          {/* Lado Direito: Informações & Personalização */}
-          <div className="flex flex-col gap-4">
-            <div>
-              <span className="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-1">
-                <Sparkles className="size-3.5" /> Versão Tailandesa 1.1 Premium
-              </span>
-              <h2 className="mt-1 font-display text-2xl sm:text-3xl uppercase leading-tight tracking-tight text-foreground">
-                {product.name}
-              </h2>
-            </div>
-
-            {/* Preço */}
-            <div className="border-y border-border py-3">
-              <div className="flex items-baseline gap-3">
-                {product.oldPrice && (
-                  <span className="text-sm text-muted-foreground line-through">
-                    {formatBRL(product.oldPrice + customizationTotal)}
-                  </span>
-                )}
-                <span className="font-display text-3xl text-foreground">
-                  {formatBRL(totalPrice)}
+        {/* Corpo de Conteúdo Rolável & Responsivo */}
+        <div className="overflow-y-auto p-4 sm:p-6 md:p-8 flex-1 scrollbar-thin">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 items-start">
+            {/* Lado Esquerdo: Imagem Ampliada */}
+            <div className="relative overflow-hidden bg-secondary border border-border rounded-none shadow-sm">
+              {product.badge && (
+                <span className="absolute left-3 top-3 z-10 bg-primary px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-primary-foreground shadow-md">
+                  {product.badge}
                 </span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                ou 3x de {formatBRL(totalPrice / 3)} sem juros no cartão
-              </p>
-              {customizationTotal > 0 && (
-                <p className="text-[11px] font-bold uppercase tracking-wider text-primary mt-1">
-                  Inclui +{formatBRL(customizationTotal)} de personalização
-                </p>
               )}
+              <img
+                src={product.image}
+                alt={product.name}
+                className="aspect-square w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
             </div>
 
-            {/* Escolha do Tamanho */}
-            <div>
-              <label className="block text-xs font-bold uppercase tracking-widest text-foreground mb-2">
-                Tamanho da Camisa: <span className="text-primary">{size}</span>
-              </label>
-              <div className="flex flex-wrap gap-2">
-                {product.sizes.map((s) => (
-                  <button
-                    key={s}
-                    type="button"
-                    onClick={() => setSize(s)}
-                    className={`min-w-[42px] h-10 border px-3 text-xs font-bold uppercase transition-all flex items-center justify-center ${
-                      size === s
-                        ? "border-primary bg-primary text-primary-foreground shadow-sm scale-105"
-                        : "border-border text-foreground hover:border-foreground bg-background"
-                    }`}
-                  >
-                    {s}
-                  </button>
-                ))}
+            {/* Lado Direito: Informações & Personalização */}
+            <div className="flex flex-col gap-4">
+              <div>
+                <span className="text-[11px] font-bold uppercase tracking-widest text-primary flex items-center gap-1">
+                  <Sparkles className="size-3.5" /> Versão Tailandesa 1.1 Premium
+                </span>
+                <h2 className="mt-1 font-display text-2xl sm:text-3xl lg:text-4xl uppercase leading-tight tracking-tight text-foreground">
+                  {product.name}
+                </h2>
               </div>
-            </div>
 
-            {/* Personalização de Nome e Número */}
-            <div className="bg-muted/40 border border-border p-3 space-y-2.5">
-              <p className="text-xs font-bold uppercase tracking-wider text-foreground flex items-center gap-1.5">
-                Personalização Oficial (Opcional)
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                <div>
-                  <label className="block text-[10px] font-semibold uppercase text-muted-foreground mb-1">
-                    Nome (+R$ 40)
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={15}
-                    placeholder="Ex: SILVA"
-                    value={customName}
-                    onChange={(e) => setCustomName(e.target.value)}
-                    className="w-full border border-border bg-background px-2.5 py-1.5 text-xs text-foreground uppercase placeholder:normal-case outline-none focus:border-primary"
-                  />
+              {/* Preço & Parcelamento */}
+              <div className="border-y border-border py-3.5">
+                <div className="flex items-baseline gap-3">
+                  {product.oldPrice && (
+                    <span className="text-sm sm:text-base text-muted-foreground line-through">
+                      {formatBRL(product.oldPrice + customizationTotal)}
+                    </span>
+                  )}
+                  <span className="font-display text-3xl sm:text-4xl text-foreground">
+                    {formatBRL(totalPrice)}
+                  </span>
                 </div>
-                <div>
-                  <label className="block text-[10px] font-semibold uppercase text-muted-foreground mb-1">
-                    Número (+R$ 40)
-                  </label>
-                  <input
-                    type="text"
-                    maxLength={3}
-                    placeholder="Ex: 10"
-                    value={customNumber}
-                    onChange={(e) => setCustomNumber(e.target.value)}
-                    className="w-full border border-border bg-background px-2.5 py-1.5 text-xs text-foreground uppercase placeholder:normal-case outline-none focus:border-primary"
-                  />
+                <p className="text-xs text-muted-foreground mt-1">
+                  ou 3x de {formatBRL(totalPrice / 3)} sem juros no cartão
+                </p>
+                {customizationTotal > 0 && (
+                  <p className="text-[11px] font-bold uppercase tracking-wider text-primary mt-1.5">
+                    Inclui +{formatBRL(customizationTotal)} de personalização oficial
+                  </p>
+                )}
+              </div>
+
+              {/* Escolha do Tamanho */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-widest text-foreground mb-2">
+                  Tamanho da Camisa: <span className="text-primary">{size}</span>
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {product.sizes.map((s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSize(s)}
+                      className={`min-w-[44px] h-10 sm:h-11 border px-3 text-xs font-bold uppercase transition-all flex items-center justify-center ${
+                        size === s
+                          ? "border-primary bg-primary text-primary-foreground shadow-sm scale-105"
+                          : "border-border text-foreground hover:border-foreground bg-background"
+                      }`}
+                    >
+                      {s}
+                    </button>
+                  ))}
                 </div>
               </div>
-            </div>
 
-            {/* Garantias Rápida */}
-            <div className="space-y-1.5 text-[11px] text-muted-foreground">
-              <p className="flex items-center gap-1.5">
-                <Truck className="size-4 text-primary shrink-0" /> Envios todos os dias com rastreamento
-              </p>
-              <p className="flex items-center gap-1.5">
-                <ShieldCheck className="size-4 text-primary shrink-0" /> Garantia de troca e satisfação 100%
-              </p>
+              {/* Personalização de Nome e Número */}
+              <div className="bg-muted/40 border border-border p-3.5 space-y-2.5">
+                <p className="text-xs font-bold uppercase tracking-wider text-foreground">
+                  Personalização Oficial (Opcional)
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase text-muted-foreground mb-1">
+                      Nome (+R$ 40)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={15}
+                      placeholder="Ex: SILVA"
+                      value={customName}
+                      onChange={(e) => setCustomName(e.target.value)}
+                      className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground uppercase placeholder:normal-case outline-none focus:border-primary"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] font-semibold uppercase text-muted-foreground mb-1">
+                      Número (+R$ 40)
+                    </label>
+                    <input
+                      type="text"
+                      maxLength={3}
+                      placeholder="Ex: 10"
+                      value={customNumber}
+                      onChange={(e) => setCustomNumber(e.target.value)}
+                      className="w-full border border-border bg-background px-3 py-2 text-xs text-foreground uppercase placeholder:normal-case outline-none focus:border-primary"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Garantias */}
+              <div className="space-y-2 text-xs text-muted-foreground pt-1">
+                <p className="flex items-center gap-2">
+                  <Truck className="size-4 text-primary shrink-0" /> Envios todos os dias com código de rastreamento
+                </p>
+                <p className="flex items-center gap-2">
+                  <ShieldCheck className="size-4 text-primary shrink-0" /> Garantia total de troca e devolução em 7 dias
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Botão Finalizar Verde Elegante */}
-        <div className="mt-6 pt-4 border-t border-border">
+        {/* Rodapé Fixo com Botão Verde Elegante */}
+        <div className="sticky bottom-0 bg-card/95 border-t border-border p-3.5 sm:p-4 backdrop-blur-md z-20">
           <button
             type="button"
             onClick={handleFinishPurchase}
-            className="w-full py-4 bg-[#16a34a] hover:bg-[#15803d] text-white text-sm font-bold uppercase tracking-[0.18em] shadow-lg transition-all flex items-center justify-center gap-2.5 active:scale-[0.99]"
+            className="w-full py-4 bg-[#16a34a] hover:bg-[#15803d] text-white text-xs sm:text-sm font-bold uppercase tracking-[0.18em] shadow-lg transition-all flex items-center justify-center gap-2.5 active:scale-[0.99]"
           >
             <ShoppingBag className="size-5" />
             Finalizar Pedido — {formatBRL(totalPrice)}
