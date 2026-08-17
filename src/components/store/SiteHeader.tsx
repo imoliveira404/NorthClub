@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "@tanstack/react-router";
-import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
+import { Link, useLocation } from "@tanstack/react-router";
+import { Menu, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useGuestAccount } from "@/lib/guest-account";
 
@@ -31,21 +31,8 @@ export function SiteHeader() {
   const [accountOpen, setAccountOpen] = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
-  const [term, setTerm] = useState("");
   const [open, setOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const navigate = useNavigate();
   const location = useLocation();
-
-  const submitSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    void navigate({
-      to: "/produtos",
-      search: { q: term.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 },
-    });
-    setOpen(false);
-    setSearchOpen(false);
-  };
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
@@ -60,8 +47,8 @@ export function SiteHeader() {
 
       <div className="bg-card">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-4 py-4">
-          {/* Lado Esquerdo: Menu Hamburguer (Mobile) / Campo de Busca (Desktop) */}
-          <div className="flex flex-1 items-center justify-start gap-4">
+          {/* Lado Esquerdo: Menu Hamburguer no Mobile / Spacer no Desktop */}
+          <div className="flex flex-1 items-center justify-start">
             <button
               className="text-foreground lg:hidden"
               aria-label="Abrir menu"
@@ -69,18 +56,6 @@ export function SiteHeader() {
             >
               {open ? <X className="size-6" /> : <Menu className="size-6" />}
             </button>
-
-            <form className="relative hidden flex-1 lg:block" onSubmit={submitSearch}>
-              <input
-                type="search"
-                placeholder="O que você está buscando?"
-                aria-label="Buscar produtos"
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
-                className="w-full max-w-md rounded-none border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-              />
-              <Search className="pointer-events-none absolute left-[calc(28rem-2.25rem)] top-2.5 hidden size-5 text-muted-foreground xl:block" />
-            </form>
           </div>
 
           {/* Centro: Nome "North." Centralizado */}
@@ -92,18 +67,8 @@ export function SiteHeader() {
             North<span className="text-primary">.</span>
           </Link>
 
-          {/* Lado Direito: Lupa (Mobile), Conta (Desktop) e Sacola */}
+          {/* Lado Direito: Minha Conta (Desktop) e Sacola */}
           <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
-            {/* Lupa no mobile, à esquerda da sacola */}
-            <button
-              type="button"
-              className="text-foreground lg:hidden"
-              aria-label="Buscar produtos"
-              onClick={() => setSearchOpen((v) => !v)}
-            >
-              <Search className="size-6" />
-            </button>
-
             {/* Minha conta (Desktop) */}
             <div className="relative hidden sm:block">
               <button
@@ -191,29 +156,6 @@ export function SiteHeader() {
           </div>
         </div>
 
-        {/* Barra de Busca Expansível no Mobile */}
-        {searchOpen && (
-          <div className="border-t border-border bg-card p-3 lg:hidden">
-            <form onSubmit={submitSearch} className="flex gap-2">
-              <input
-                type="search"
-                autoFocus
-                placeholder="O que você está buscando?"
-                aria-label="Buscar produtos"
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
-                className="w-full border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
-              />
-              <button
-                type="submit"
-                className="bg-primary px-4 text-xs font-bold uppercase tracking-widest text-primary-foreground"
-              >
-                Buscar
-              </button>
-            </form>
-          </div>
-        )}
-
         <nav className="border-t border-border">
           <div className="mx-auto hidden max-w-7xl items-center gap-1.5 px-4 lg:flex">
             {NAV.map((item) => {
@@ -240,16 +182,6 @@ export function SiteHeader() {
 
           {open && (
             <div className="flex flex-col px-4 pb-4 lg:hidden">
-              <form onSubmit={submitSearch} className="py-3">
-                <input
-                  type="search"
-                  placeholder="O que você está buscando?"
-                  aria-label="Buscar produtos"
-                  value={term}
-                  onChange={(e) => setTerm(e.target.value)}
-                  className="w-full border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-                />
-              </form>
               {NAV.map((item) => {
                 const isActive =
                   item.path === "/"
