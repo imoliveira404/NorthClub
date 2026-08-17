@@ -32,6 +32,8 @@ export function SiteHeader() {
   const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
   const [term, setTerm] = useState("");
+  const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const navigate = useNavigate();
 
   const submitSearch = (e: React.FormEvent) => {
@@ -41,9 +43,8 @@ export function SiteHeader() {
       search: { q: term.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 },
     });
     setOpen(false);
+    setSearchOpen(false);
   };
-
-  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
@@ -57,36 +58,52 @@ export function SiteHeader() {
       </div>
 
       <div className="bg-card">
-        <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 py-4">
-          <button
-            className="text-foreground lg:hidden"
-            aria-label="Abrir menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            {open ? <X className="size-6" /> : <Menu className="size-6" />}
-          </button>
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-4 py-4">
+          {/* Lado Esquerdo: Menu Hamburguer (Mobile) / Campo de Busca (Desktop) */}
+          <div className="flex flex-1 items-center justify-start gap-4">
+            <button
+              className="text-foreground lg:hidden"
+              aria-label="Abrir menu"
+              onClick={() => setOpen((v) => !v)}
+            >
+              {open ? <X className="size-6" /> : <Menu className="size-6" />}
+            </button>
 
-          <form className="relative hidden flex-1 lg:block" onSubmit={submitSearch}>
-            <input
-              type="search"
-              placeholder="O que você está buscando?"
-              aria-label="Buscar produtos"
-              value={term}
-              onChange={(e) => setTerm(e.target.value)}
-              className="w-full max-w-md rounded-none border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
-            />
-            <Search className="pointer-events-none absolute left-[calc(28rem-2.25rem)] top-2.5 hidden size-5 text-muted-foreground xl:block" />
-          </form>
+            <form className="relative hidden flex-1 lg:block" onSubmit={submitSearch}>
+              <input
+                type="search"
+                placeholder="O que você está buscando?"
+                aria-label="Buscar produtos"
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                className="w-full max-w-md rounded-none border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
+              />
+              <Search className="pointer-events-none absolute left-[calc(28rem-2.25rem)] top-2.5 hidden size-5 text-muted-foreground xl:block" />
+            </form>
+          </div>
 
+          {/* Centro: Nome "North." Centralizado */}
           <Link
             to="/"
             search={defaultCatalogSearch}
-            className="mx-auto font-display text-3xl uppercase tracking-tight text-foreground"
+            className="font-display text-3xl uppercase tracking-tight text-foreground text-center shrink-0"
           >
             North<span className="text-primary">.</span>
           </Link>
 
-          <div className="flex flex-1 items-center justify-end gap-5">
+          {/* Lado Direito: Lupa (Mobile), Conta (Desktop) e Sacola */}
+          <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
+            {/* Lupa no mobile, à esquerda da sacola */}
+            <button
+              type="button"
+              className="text-foreground lg:hidden"
+              aria-label="Buscar produtos"
+              onClick={() => setSearchOpen((v) => !v)}
+            >
+              <Search className="size-6" />
+            </button>
+
+            {/* Minha conta (Desktop) */}
             <div className="relative hidden sm:block">
               <button
                 type="button"
@@ -163,6 +180,7 @@ export function SiteHeader() {
               )}
             </div>
 
+            {/* Sacola de Compras */}
             <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />
               <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
@@ -171,6 +189,29 @@ export function SiteHeader() {
             </Link>
           </div>
         </div>
+
+        {/* Barra de Busca Expansível no Mobile */}
+        {searchOpen && (
+          <div className="border-t border-border bg-card p-3 lg:hidden">
+            <form onSubmit={submitSearch} className="flex gap-2">
+              <input
+                type="search"
+                autoFocus
+                placeholder="O que você está buscando?"
+                aria-label="Buscar produtos"
+                value={term}
+                onChange={(e) => setTerm(e.target.value)}
+                className="w-full border border-border bg-background px-4 py-2 text-sm text-foreground outline-none focus:border-primary"
+              />
+              <button
+                type="submit"
+                className="bg-primary px-4 text-xs font-bold uppercase tracking-widest text-primary-foreground"
+              >
+                Buscar
+              </button>
+            </form>
+          </div>
+        )}
 
         <nav className="border-t border-border">
           <div className="mx-auto hidden max-w-7xl items-center gap-6 px-4 lg:flex">
