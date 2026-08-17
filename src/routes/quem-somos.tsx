@@ -60,7 +60,7 @@ function QuemSomosPage() {
                   rel="noopener noreferrer"
                   className="inline-block bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-opacity hover:opacity-90"
                 >
-                  Falar Conosco no WhatsApp
+                  WhatsApp
                 </a>
               </div>
             </div>

@@ -81,7 +81,7 @@ function ContatoPage() {
                   </div>
                   <div>
                     <h3 className="font-display text-lg uppercase text-foreground">
-                      WhatsApp Oficial
+                      WhatsApp
                     </h3>
                     <p className="text-xs font-bold text-primary mt-0.5">
                       {WHATSAPP_DISPLAY}
