@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import {
   BadgeCheck,
+  ChevronLeft,
+  ChevronRight,
   PackageCheck,
   ShieldCheck,
   Truck,
@@ -10,6 +12,11 @@ import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
 import { FilterPanel } from "@/components/store/FilterPanel";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+} from "@/components/ui/pagination";
 import { type Product } from "@/lib/products";
 import {
   CATEGORIES,
@@ -28,7 +35,23 @@ type CatalogSearch = {
   sort: string;
   min: number;
   max: number;
+  page?: number;
 };
+
+const ITEMS_PER_PAGE = 16;
+
+function getPageNumbers(current: number, total: number): (number | string)[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  if (current <= 4) {
+    return [1, 2, 3, 4, 5, "...", total];
+  }
+  if (current >= total - 3) {
+    return [1, "...", total - 4, total - 3, total - 2, total - 1, total];
+  }
+  return [1, "...", current - 1, current, current + 1, "...", total];
+}
 
 export const Route = createFileRoute("/")({
   validateSearch: (search: Record<string, unknown>): CatalogSearch => ({
@@ -38,6 +61,7 @@ export const Route = createFileRoute("/")({
     sort: typeof search["sort"] === "string" ? search["sort"] : "recentes",
     min: Number(search["min"]) > 0 ? Number(search["min"]) : 0,
     max: Number(search["max"]) > 0 ? Number(search["max"]) : 0,
+    page: Number(search["page"]) > 0 ? Math.floor(Number(search["page"])) : 1,
   }),
   head: () => ({
     meta: [
@@ -111,13 +135,29 @@ const chip = (active: boolean) =>
 
 function Home() {
   const storeProducts = useStoreProducts();
-  const { q, cat, size, sort, min, max } = Route.useSearch();
+  const { q, cat, size, sort, min, max, page } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
 
   const setFilter = (patch: Partial<CatalogSearch>) => {
     void navigate({
-      search: (prev: CatalogSearch) => ({ ...prev, ...patch }),
+      search: (prev: CatalogSearch) => {
+        const next = { ...prev, ...patch };
+        if (!("page" in patch)) {
+          next.page = 1;
+        }
+        return next;
+      },
     });
+  };
+
+  const goToPage = (newPage: number) => {
+    setFilter({ page: newPage });
+    if (typeof window !== "undefined") {
+      const section = document.getElementById("produtos");
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+    }
   };
 
   const catalog: CatalogItem[] = storeProducts.map(toCatalogItem);
@@ -154,6 +194,18 @@ function Home() {
       if (sort === "nome") return a.name.localeCompare(b.name, "pt-BR");
       return a.createdIndex - b.createdIndex;
     });
+
+  const totalItems = filtered.length;
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+  const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
+
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
+  const endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+  const paginatedProducts = filtered.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE,
+  );
 
   const activeCount = (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
 
@@ -230,8 +282,9 @@ function Home() {
                 Produtos
               </h2>
               <p className="mt-2 text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                {filtered.length} camisa(s) encontradas
+                Exibindo {startItem}–{endItem} de {totalItems} camisa(s)
                 {term ? ` para "${q.trim()}"` : ""}
+                {totalPages > 1 ? ` (Página ${currentPage} de ${totalPages})` : ""}
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
@@ -248,6 +301,7 @@ function Home() {
                     sort: "recentes",
                     min: 0,
                     max: 0,
+                    page: 1,
                   })
                 }
                 activeCount={activeCount}
@@ -275,11 +329,79 @@ function Home() {
               Nenhuma camisa encontrada com esses filtros. Tente outra busca.
             </p>
           ) : (
-            <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-              {filtered.map((p) => (
-                <ProductCard key={p.id} product={p} />
-              ))}
-            </div>
+            <>
+              <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+                {paginatedProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+
+              {totalPages > 1 && (
+                <div className="mt-12 flex flex-col items-center justify-center gap-4 border-t border-border pt-8">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <button
+                          type="button"
+                          disabled={currentPage <= 1}
+                          onClick={() => goToPage(currentPage - 1)}
+                          className={`flex items-center gap-1 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            currentPage <= 1
+                              ? "pointer-events-none opacity-30"
+                              : "text-foreground hover:bg-accent"
+                          }`}
+                        >
+                          <ChevronLeft className="size-4" />
+                          Anterior
+                        </button>
+                      </PaginationItem>
+
+                      {getPageNumbers(currentPage, totalPages).map((p, i) => (
+                        <PaginationItem key={i}>
+                          {typeof p === "number" ? (
+                            <button
+                              type="button"
+                              onClick={() => goToPage(p)}
+                              className={`flex min-w-[36px] h-9 items-center justify-center px-3 text-xs font-bold transition-colors ${
+                                currentPage === p
+                                  ? "border border-primary bg-primary text-primary-foreground"
+                                  : "border border-border text-foreground hover:border-primary hover:text-primary"
+                              }`}
+                            >
+                              {p}
+                            </button>
+                          ) : (
+                            <span className="flex h-9 items-center px-2 text-xs font-bold text-muted-foreground">
+                              ...
+                            </span>
+                          )}
+                        </PaginationItem>
+                      ))}
+
+                      <PaginationItem>
+                        <button
+                          type="button"
+                          disabled={currentPage >= totalPages}
+                          onClick={() => goToPage(currentPage + 1)}
+                          className={`flex items-center gap-1 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                            currentPage >= totalPages
+                              ? "pointer-events-none opacity-30"
+                              : "text-foreground hover:bg-accent"
+                          }`}
+                        >
+                          Próxima
+                          <ChevronRight className="size-4" />
+                        </button>
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+
+                  <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Página {currentPage} de {totalPages}
+                  </p>
+                </div>
+              )}
+            </>
           )}
         </section>
 
