@@ -89,17 +89,23 @@ export const Route = createFileRoute("/")({
         content:
           "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo, envio para todo o Brasil e até 10% OFF em quantidade.",
       },
+      { property: "og:site_name", content: "North Football Club" },
       {
         property: "og:title",
-        content: "North | Camisas de Time Tailandesas 1.1",
+        content: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
       },
       {
         property: "og:description",
         content:
-          "Fornecedor de camisas tailandesas 1.1 a pronta entrega. Envio para todo o Brasil.",
+          "Fornecedor de camisas tailandesas 1.1 a pronta entrega. Atacado e varejo com envio para todo o Brasil.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "North | Camisas de Time Tailandesas 1.1" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   errorComponent: () => (

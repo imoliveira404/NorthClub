@@ -15,6 +15,18 @@ export const Route = createFileRoute("/contato")({
         content:
           "Entre em contato com a equipe North. Atendimento via WhatsApp, e-mail e formulário de mensagem.",
       },
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "Fale Conosco | North Football Club" },
+      {
+        property: "og:description",
+        content:
+          "Entre em contato com a equipe North. Atendimento rápido via WhatsApp, e-mail e formulário.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Fale Conosco | North Football Club" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   component: ContatoPage,

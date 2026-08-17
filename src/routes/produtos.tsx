@@ -87,6 +87,18 @@ export const Route = createFileRoute("/produtos")({
         content:
           "Explore nosso catálogo completo de camisas de time versão tailandesa 1.1 a pronta entrega. Times brasileiros, europeus, seleções e retrôs.",
       },
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "Catálogo de Camisas 1.1 | North Football Club" },
+      {
+        property: "og:description",
+        content:
+          "Catálogo completo de camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Catálogo de Camisas 1.1 | North Football Club" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   component: ProdutosPage,

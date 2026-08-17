@@ -14,6 +14,18 @@ export const Route = createFileRoute("/troca-e-devolucoes")({
         content:
           "Política de trocas e devoluções da North. Garantia de 7 dias para devoluções e suporte rápido para trocas de tamanho ou defeito.",
       },
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "Trocas e Devoluções | North Football Club" },
+      {
+        property: "og:description",
+        content:
+          "Política de trocas e devoluções da North. Garantia de 7 dias e suporte rápido para trocas.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Trocas e Devoluções | North Football Club" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   component: TrocaEDevolucoesPage,

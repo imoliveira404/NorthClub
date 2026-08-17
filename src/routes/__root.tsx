@@ -75,19 +75,36 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "North | Camisas Tailandesas 1.1 a Pronta Entrega" },
+      { title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
       {
         name: "description",
         content:
-          "Camisas de time versão tailandesa 1.1 a pronta entrega, atacado e varejo com envio para todo o Brasil.",
+          "Camisas de time versão tailandesa 1.1 a pronta entrega, atacado e varejo direto do Brasil. Envio rápido para todo o país.",
       },
-      { property: "og:title", content: "North | Camisas Tailandesas 1.1" },
+      { name: "theme-color", content: "#ec4899" },
+      // Open Graph / WhatsApp / Telegram / Redes Sociais
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
       {
         property: "og:description",
-        content: "Camisas tailandesas 1.1 a pronta entrega, envio para todo o Brasil.",
+        content:
+          "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:locale", content: "pt_BR" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { property: "og:image:type", content: "image/webp" },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:image:alt", content: "North Football Club — Camisas de Time Tailandesas 1.1" },
+      // Twitter Card
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "North | Camisas de Time Tailandesas 1.1" },
+      {
+        name: "twitter:description",
+        content: "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Envio para todo o Brasil.",
+      },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
     links: [
       {

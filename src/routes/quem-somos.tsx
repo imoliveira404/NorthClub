@@ -14,6 +14,18 @@ export const Route = createFileRoute("/quem-somos")({
         content:
           "Conheça a história da North, o seu fornecedor especialista em camisas de futebol versão tailandesa 1.1 a pronta entrega no Brasil.",
       },
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "Quem Somos | North Football Club" },
+      {
+        property: "og:description",
+        content:
+          "Conheça a história da North, especialista em camisas de futebol versão tailandesa 1.1 a pronta entrega no Brasil.",
+      },
+      { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Quem Somos | North Football Club" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   component: QuemSomosPage,

@@ -19,13 +19,17 @@ export const Route = createFileRoute("/checkout")({
         content:
           "Revise as camisas do seu carrinho e finalize o pedido direto com nosso atendimento no WhatsApp.",
       },
-      { property: "og:title", content: "Carrinho | North" },
+      { property: "og:site_name", content: "North Football Club" },
+      { property: "og:title", content: "Carrinho | North Football Club" },
       {
         property: "og:description",
         content: "Revise seu carrinho e finalize o pedido com nosso atendimento no WhatsApp.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:image", content: "/assets/hero-stadium.webp" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Carrinho | North Football Club" },
+      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
     ],
   }),
   component: Cart,
