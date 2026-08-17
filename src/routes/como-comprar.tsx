@@ -4,29 +4,17 @@ import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { whatsappLink } from "@/lib/whatsapp";
+import { buildSeoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/como-comprar")({
   head: () => ({
-    meta: [
-      { title: "Como Comprar | North Football Club" },
-      {
-        name: "description",
-        content:
-          "Guia passo a passo de como comprar camisas de futebol tailandesas 1.1 na North. Compra fácil, segura e com envio imediato.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "Como Comprar | North Football Club" },
-      {
-        property: "og:description",
-        content:
-          "Guia passo a passo de como comprar camisas de futebol tailandesas 1.1 na North. Compra fácil e segura.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Como Comprar | North Football Club" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "Como Comprar | North Football Club",
+      description:
+        "Guia passo a passo de como comprar camisas de futebol tailandesas 1.1 na North. Compra fácil, 100% segura e com envio imediato.",
+      path: "/como-comprar",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   component: ComoComprarPage,
 });

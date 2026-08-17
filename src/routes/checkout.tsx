@@ -9,28 +9,17 @@ import { useCart } from "@/lib/cart";
 import { useGuestAccount } from "@/lib/guest-account";
 import { formatBRL } from "@/lib/products";
 import { WHATSAPP_DISPLAY, cartWhatsappMessage, whatsappLink } from "@/lib/whatsapp";
+import { buildSeoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
-    meta: [
-      { title: "Carrinho | North — Finalize no WhatsApp" },
-      {
-        name: "description",
-        content:
-          "Revise as camisas do seu carrinho e finalize o pedido direto com nosso atendimento no WhatsApp.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "Carrinho | North Football Club" },
-      {
-        property: "og:description",
-        content: "Revise seu carrinho e finalize o pedido com nosso atendimento no WhatsApp.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Carrinho | North Football Club" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "Carrinho | North Football Club",
+      description:
+        "Revise as camisas do seu carrinho e finalize o pedido direto com nosso atendimento no WhatsApp.",
+      path: "/checkout",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   component: Cart,
 });

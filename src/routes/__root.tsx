@@ -11,6 +11,7 @@ import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { CartProvider } from "@/lib/cart";
+import { buildSeoMeta, getStructuredDataJSON } from "@/lib/seo";
 
 function NotFoundComponent() {
   return (
@@ -72,40 +73,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
-      {
-        name: "description",
-        content:
-          "Camisas de time versão tailandesa 1.1 a pronta entrega, atacado e varejo direto do Brasil. Envio rápido para todo o país.",
-      },
-      { name: "theme-color", content: "#ec4899" },
-      // Open Graph / WhatsApp / Telegram / Redes Sociais
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
-      {
-        property: "og:description",
-        content:
-          "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:locale", content: "pt_BR" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { property: "og:image:type", content: "image/webp" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { property: "og:image:alt", content: "North Football Club — Camisas de Time Tailandesas 1.1" },
-      // Twitter Card
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "North | Camisas de Time Tailandesas 1.1" },
-      {
-        name: "twitter:description",
-        content: "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Envio para todo o Brasil.",
-      },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
+      description:
+        "Camisas de time versão tailandesa 1.1 a pronta entrega no Brasil. Atacado e varejo com envio rápido para todo o país.",
+      path: "/",
+      image: "/assets/hero-stadium.webp",
+    }),
     links: [
       {
         rel: "stylesheet",
@@ -131,6 +105,10 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="pt-BR">
       <head>
         <HeadContent />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: getStructuredDataJSON() }}
+        />
       </head>
       <body>
         {children}

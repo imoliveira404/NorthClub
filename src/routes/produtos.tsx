@@ -28,6 +28,7 @@ import { useStoreProducts } from "@/lib/product-store";
 import { useItemsPerPage } from "@/hooks/use-items-per-page";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { buildSeoMeta } from "@/lib/seo";
 
 type CatalogSearch = {
   q: string;
@@ -80,26 +81,13 @@ export const Route = createFileRoute("/produtos")({
     page: Number(search["page"]) > 0 ? Math.floor(Number(search["page"])) : 1,
   }),
   head: () => ({
-    meta: [
-      { title: "Catálogo de Camisas 1.1 | North Football Club" },
-      {
-        name: "description",
-        content:
-          "Explore nosso catálogo completo de camisas de time versão tailandesa 1.1 a pronta entrega. Times brasileiros, europeus, seleções e retrôs.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "Catálogo de Camisas 1.1 | North Football Club" },
-      {
-        property: "og:description",
-        content:
-          "Catálogo completo de camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Catálogo de Camisas 1.1 | North Football Club" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "Catálogo de Camisas 1.1 | North Football Club",
+      description:
+        "Explore nosso catálogo completo de camisas de time versão tailandesa 1.1 a pronta entrega. Times brasileiros, europeus, seleções e edições retrôs.",
+      path: "/produtos",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   component: ProdutosPage,
 });

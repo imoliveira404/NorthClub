@@ -5,29 +5,17 @@ import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { Toaster, toast } from "sonner";
 import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
+import { buildSeoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
-    meta: [
-      { title: "Fale Conosco | North Football Club" },
-      {
-        name: "description",
-        content:
-          "Entre em contato com a equipe North. Atendimento via WhatsApp, e-mail e formulário de mensagem.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "Fale Conosco | North Football Club" },
-      {
-        property: "og:description",
-        content:
-          "Entre em contato com a equipe North. Atendimento rápido via WhatsApp, e-mail e formulário.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Fale Conosco | North Football Club" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "Fale Conosco | North Football Club",
+      description:
+        "Entre em contato com a equipe North. Atendimento via WhatsApp (+55 11 96697-3200), e-mail e formulário de suporte.",
+      path: "/contato",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   component: ContatoPage,
 });

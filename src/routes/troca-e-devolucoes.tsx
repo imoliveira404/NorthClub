@@ -4,29 +4,17 @@ import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { whatsappLink } from "@/lib/whatsapp";
+import { buildSeoMeta } from "@/lib/seo";
 
 export const Route = createFileRoute("/troca-e-devolucoes")({
   head: () => ({
-    meta: [
-      { title: "Trocas e Devoluções | North Football Club" },
-      {
-        name: "description",
-        content:
-          "Política de trocas e devoluções da North. Garantia de 7 dias para devoluções e suporte rápido para trocas de tamanho ou defeito.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      { property: "og:title", content: "Trocas e Devoluções | North Football Club" },
-      {
-        property: "og:description",
-        content:
-          "Política de trocas e devoluções da North. Garantia de 7 dias e suporte rápido para trocas.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Trocas e Devoluções | North Football Club" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "Trocas e Devoluções | North Football Club",
+      description:
+        "Política transparente de trocas e devoluções da North. Garantia de 7 dias para devoluções e suporte rápido no WhatsApp.",
+      path: "/troca-e-devolucoes",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   component: TrocaEDevolucoesPage,
 });

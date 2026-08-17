@@ -29,6 +29,7 @@ import { whatsappLink } from "@/lib/whatsapp";
 import { useItemsPerPage } from "@/hooks/use-items-per-page";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import { buildSeoMeta } from "@/lib/seo";
 import heroStadium from "@/assets/hero-stadium.webp";
 
 type CatalogSearch = {
@@ -82,31 +83,13 @@ export const Route = createFileRoute("/")({
     page: Number(search["page"]) > 0 ? Math.floor(Number(search["page"])) : 1,
   }),
   head: () => ({
-    meta: [
-      { title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
-      {
-        name: "description",
-        content:
-          "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo, envio para todo o Brasil e até 10% OFF em quantidade.",
-      },
-      { property: "og:site_name", content: "North Football Club" },
-      {
-        property: "og:title",
-        content: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
-      },
-      {
-        property: "og:description",
-        content:
-          "Fornecedor de camisas tailandesas 1.1 a pronta entrega. Atacado e varejo com envio para todo o Brasil.",
-      },
-      { property: "og:type", content: "website" },
-      { property: "og:image", content: "/assets/hero-stadium.webp" },
-      { property: "og:image:width", content: "1200" },
-      { property: "og:image:height", content: "630" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "North | Camisas de Time Tailandesas 1.1" },
-      { name: "twitter:image", content: "/assets/hero-stadium.webp" },
-    ],
+    meta: buildSeoMeta({
+      title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
+      description:
+        "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil e até 10% OFF em quantidade.",
+      path: "/",
+      image: "/assets/hero-stadium.webp",
+    }),
   }),
   errorComponent: () => (
     <div className="flex min-h-screen items-center justify-center bg-background px-4 text-center text-sm text-muted-foreground">

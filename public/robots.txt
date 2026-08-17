@@ -10,5 +10,12 @@ Allow: /
 User-agent: facebookexternalhit
 Allow: /
 
+User-agent: WhatsApp
+Allow: /
+
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /api/
+
+Sitemap: https://northclub.com.br/sitemap.xml
