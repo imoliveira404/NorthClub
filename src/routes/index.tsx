@@ -234,10 +234,10 @@ function Home() {
             className="absolute inset-0 size-full object-cover opacity-45"
           />
           <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-20">
-            <p className="font-display text-5xl uppercase leading-[0.9] text-background sm:text-7xl lg:text-8xl">
+            <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight text-background sm:text-7xl lg:text-8xl">
               Vista o jogo
-            </p>
-            <p className="mt-2 font-display text-3xl uppercase leading-[0.9] text-primary sm:text-5xl lg:text-6xl" style={{ fontSize: "0.95em" }}>
+            </h1>
+            <p className="mt-2 font-display text-3xl uppercase leading-[0.95] tracking-wide text-primary sm:text-5xl lg:text-6xl">
               Sua camisa. Seu time.
             </p>
             <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
