@@ -32,6 +32,11 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { buildSeoMeta } from "@/lib/seo";
 import heroStadium from "@/assets/hero-stadium.webp";
 import banner1 from "@/assets/banner1.webp";
+import heroImg1 from "@/assets/hero/imagem1.webp";
+import heroImg2 from "@/assets/hero/imagem2.webp";
+import heroImg3 from "@/assets/hero/imagem3.webp";
+
+const HERO_CAROUSEL_IMAGES = [heroImg1, heroImg2, heroImg3];
 
 type CatalogSearch = {
   q: string;
@@ -219,6 +224,15 @@ function Home() {
 
   const activeCount = (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
 
+  const [heroSlideIndex, setHeroSlideIndex] = useState(0);
+
+  useEffect(() => {
+    const heroTimer = setInterval(() => {
+      setHeroSlideIndex((prev) => (prev + 1) % HERO_CAROUSEL_IMAGES.length);
+    }, 3500);
+    return () => clearInterval(heroTimer);
+  }, []);
+
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -234,7 +248,7 @@ function Home() {
             height={1088}
             className="absolute inset-0 size-full object-cover opacity-45"
           />
-          <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-20">
+          <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-16 sm:py-20">
             <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight text-background sm:text-7xl lg:text-8xl">
               Vista o jogo
             </h1>
@@ -250,6 +264,43 @@ function Home() {
             >
               Ver produtos
             </a>
+
+            {/* Carrossel Circular Exclusivo Mobile (Abaixo do Botão Ver Produtos) */}
+            <div className="mt-10 sm:hidden flex flex-col items-center justify-center w-full">
+              <div className="relative size-56 rounded-full border-4 border-primary/80 bg-card/10 p-1.5 shadow-[0_0_30px_rgba(236,72,153,0.45)] backdrop-blur-sm overflow-hidden flex items-center justify-center">
+                <div className="relative size-full rounded-full overflow-hidden">
+                  {HERO_CAROUSEL_IMAGES.map((imgSrc, idx) => (
+                    <img
+                      key={idx}
+                      src={imgSrc}
+                      alt={`Destaque North ${idx + 1}`}
+                      className={`absolute inset-0 size-full object-cover rounded-full transition-all duration-700 ease-in-out ${
+                        heroSlideIndex === idx
+                          ? "opacity-100 scale-100 rotate-0"
+                          : "opacity-0 scale-95 -rotate-3 pointer-events-none"
+                      }`}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              {/* Indicadores do Carrossel (Bolinhas Centralizadas) */}
+              <div className="mt-4 flex items-center justify-center gap-2">
+                {HERO_CAROUSEL_IMAGES.map((_, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => setHeroSlideIndex(idx)}
+                    aria-label={`Ir para foto ${idx + 1}`}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      heroSlideIndex === idx
+                        ? "w-7 bg-primary"
+                        : "w-2.5 bg-background/40 hover:bg-background/70"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
           </div>
         </section>
 
