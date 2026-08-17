@@ -39,7 +39,7 @@ export function SiteHeader() {
     const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
     const logoTimer = setTimeout(() => {
       setLogoExpanded(false);
-    }, 4000);
+    }, 1500);
     return () => {
       clearInterval(id);
       clearTimeout(logoTimer);
