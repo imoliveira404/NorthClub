@@ -281,7 +281,7 @@ function Home() {
                 alt="North Football Club — Novidades e Lançamentos Exclusivos"
                 loading="lazy"
                 decoding="async"
-                className="w-full h-auto object-contain scale-[1.2] origin-center sm:scale-100 sm:object-cover sm:max-h-[460px]"
+                className="w-full h-auto object-contain scale-[1.27] origin-center sm:scale-100 sm:object-cover sm:max-h-[460px]"
               />
             </div>
           </ScrollReveal>
