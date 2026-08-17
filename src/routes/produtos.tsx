@@ -44,16 +44,16 @@ function getPageNumbers(current: number, total: number, isMobile: boolean): (num
   if (total <= 1) return [1];
 
   if (isMobile) {
-    if (total <= 4) {
+    if (total <= 3) {
       return Array.from({ length: total }, (_, i) => i + 1);
     }
-    if (current <= 2) {
-      return [1, 2, "...", total];
+    if (current >= total - 2) {
+      return [total - 2, total - 1, total];
     }
-    if (current >= total - 1) {
-      return [1, "...", total - 1, total];
+    if (current + 2 === total - 1) {
+      return [current, current + 1, current + 2, total];
     }
-    return [1, "...", current, "...", total];
+    return [current, current + 1, current + 2, "...", total];
   }
 
   if (total <= 7) {
