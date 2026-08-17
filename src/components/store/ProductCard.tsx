@@ -105,10 +105,10 @@ export function ProductCard({ product }: { product: Product }) {
           ) : (
             <button
               type="button"
-              onClick={() => setModalOpen(true)}
+              onClick={handleCartClick}
               className="w-full h-9 sm:h-10 bg-foreground text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground flex items-center justify-center"
             >
-              Adquirir / Detalhes
+              Adquirir
             </button>
           )}
 

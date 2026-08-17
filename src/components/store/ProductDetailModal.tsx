@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "@tanstack/react-router";
 import { Check, ShieldCheck, ShoppingBag, Sparkles, Truck, X } from "lucide-react";
 import { toast } from "sonner";
@@ -18,7 +19,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
   const [customName, setCustomName] = useState<string>("");
   const [customNumber, setCustomNumber] = useState<string>("");
 
-  if (!open) return null;
+  if (!open || typeof window === "undefined") return null;
 
   // Cálculo da personalização (Nome R$40, Número R$40, Ambos R$80)
   const nameCost = customName.trim() ? 40 : 0;
@@ -55,9 +56,9 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
     void navigate({ to: "/checkout" });
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-3 sm:p-6 overflow-y-auto animate-in fade-in duration-200"
       onClick={onClose}
     >
       <div
@@ -204,6 +205,7 @@ export function ProductDetailModal({ product, open, onClose }: ProductDetailModa
           </button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
