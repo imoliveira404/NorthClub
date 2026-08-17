@@ -5,7 +5,7 @@ import { clearRecords, deleteRecord, getAllRecords, putRecord } from "@/lib/idb"
 
 const LEGACY_KEY = "futz-products";
 const META_ID = "__catalog_meta__";
-const CATALOG_VERSION = 4;
+const CATALOG_VERSION = 5;
 
 function toAdminProduct(p: Product, category: string, createdAt: string): AdminProduct {
   return {
