@@ -18,7 +18,7 @@ export const Route = createFileRoute("/checkout")({
       description:
         "Revise as camisas do seu carrinho e finalize o pedido direto com nosso atendimento no WhatsApp.",
       path: "/checkout",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: Cart,

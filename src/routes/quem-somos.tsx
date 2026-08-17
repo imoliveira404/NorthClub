@@ -13,7 +13,7 @@ export const Route = createFileRoute("/quem-somos")({
       description:
         "Conheça a história da North, o seu fornecedor especialista em camisas de futebol versão tailandesa 1.1 a pronta entrega no Brasil.",
       path: "/quem-somos",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: QuemSomosPage,

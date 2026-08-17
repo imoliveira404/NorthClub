@@ -85,11 +85,11 @@ export const Route = createFileRoute("/")({
   }),
   head: () => ({
     meta: buildSeoMeta({
-      title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
+      title: "North Football Club — Camisas de Futebol Tailandesas 1.1",
       description:
-        "Camisas de futebol versão tailandesa 1.1 a pronta entrega. Atacado e varejo com envio rápido para todo o Brasil e até 10% OFF em quantidade.",
+        "⚽ Sua Camisa. Seu Time. Camisas de futebol versão tailandesa 1.1 a pronta entrega com envio rápido para todo o Brasil. Atacado e varejo com máxima qualidade!",
       path: "/",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   errorComponent: () => (

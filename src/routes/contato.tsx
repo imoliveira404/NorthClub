@@ -14,7 +14,7 @@ export const Route = createFileRoute("/contato")({
       description:
         "Entre em contato com a equipe North. Atendimento via WhatsApp (+55 11 96697-3200), e-mail e formulário de suporte.",
       path: "/contato",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: ContatoPage,

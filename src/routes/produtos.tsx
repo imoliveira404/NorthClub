@@ -86,7 +86,7 @@ export const Route = createFileRoute("/produtos")({
       description:
         "Explore nosso catálogo completo de camisas de time versão tailandesa 1.1 a pronta entrega. Times brasileiros, europeus, seleções e edições retrôs.",
       path: "/produtos",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: ProdutosPage,

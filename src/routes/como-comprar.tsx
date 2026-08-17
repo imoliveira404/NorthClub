@@ -13,7 +13,7 @@ export const Route = createFileRoute("/como-comprar")({
       description:
         "Guia passo a passo de como comprar camisas de futebol tailandesas 1.1 na North. Compra fácil, 100% segura e com envio imediato.",
       path: "/como-comprar",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: ComoComprarPage,

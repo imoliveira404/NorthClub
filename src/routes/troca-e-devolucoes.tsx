@@ -13,7 +13,7 @@ export const Route = createFileRoute("/troca-e-devolucoes")({
       description:
         "Política transparente de trocas e devoluções da North. Garantia de 7 dias para devoluções e suporte rápido no WhatsApp.",
       path: "/troca-e-devolucoes",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
   }),
   component: TrocaEDevolucoesPage,
