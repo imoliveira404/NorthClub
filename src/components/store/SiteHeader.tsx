@@ -82,7 +82,7 @@ export function SiteHeader() {
                     <>
                       <strong className="block">Minha conta</strong>
                       <span className="block max-w-[9rem] truncate text-muted-foreground">
-                        {guestEmail}
+                        {guestEmail.split("@")[0]}
                       </span>
                     </>
                   ) : (
@@ -101,7 +101,7 @@ export function SiteHeader() {
                       <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                         Conectado como
                       </p>
-                      <p className="mt-1 truncate text-sm text-foreground">{guestEmail}</p>
+                      <p className="mt-1 truncate text-sm text-foreground">{guestEmail.split("@")[0]}</p>
                       <button
                         type="button"
                         onClick={() => {
