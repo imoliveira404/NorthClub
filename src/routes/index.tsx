@@ -242,15 +242,18 @@ function Home() {
         </section>
 
         <section className="border-y border-border bg-card">
-          <div className="mx-auto grid max-w-7xl gap-6 px-4 py-8 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 py-5 sm:gap-6 sm:py-8 sm:grid-cols-2 lg:grid-cols-4">
             {BENEFITS.map(({ icon: Icon, title, text }) => (
-              <div key={title} className="flex items-center gap-3">
-                <Icon className="size-8 shrink-0 text-primary" />
+              <div
+                key={title}
+                className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 border border-border/50 sm:border-0 bg-background/50 sm:bg-transparent p-3 sm:p-0"
+              >
+                <Icon className="size-6 sm:size-8 shrink-0 text-primary" />
                 <div>
-                  <p className="text-sm font-bold uppercase tracking-wide text-foreground">
+                  <p className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground leading-tight">
                     {title}
                   </p>
-                  <p className="text-xs text-muted-foreground">{text}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{text}</p>
                 </div>
               </div>
             ))}
