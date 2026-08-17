@@ -31,6 +31,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { buildSeoMeta } from "@/lib/seo";
 import heroStadium from "@/assets/hero-stadium.webp";
+import banner1 from "@/assets/banner1.webp";
 
 type CatalogSearch = {
   q: string;
@@ -269,6 +270,21 @@ function Home() {
               </div>
             ))}
           </div>
+        </section>
+
+        {/* Banner Promocional Destaque */}
+        <section className="mx-auto max-w-7xl px-4 pt-10 pb-2">
+          <ScrollReveal>
+            <div className="relative overflow-hidden rounded-none border border-border bg-card shadow-md transition-all hover:shadow-xl">
+              <img
+                src={banner1}
+                alt="North Football Club — Novidades e Lançamentos Exclusivos"
+                loading="lazy"
+                decoding="async"
+                className="w-full h-auto object-cover max-h-[460px]"
+              />
+            </div>
+          </ScrollReveal>
         </section>
 
         <section className="mx-auto max-w-7xl px-4 py-12">
