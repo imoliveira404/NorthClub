@@ -26,6 +26,7 @@ import {
 } from "@/lib/admin-products";
 import { useStoreProducts } from "@/lib/product-store";
 import { useItemsPerPage } from "@/hooks/use-items-per-page";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type CatalogSearch = {
   q: string;
@@ -39,7 +40,22 @@ type CatalogSearch = {
 
 const ITEMS_PER_PAGE = 10;
 
-function getPageNumbers(current: number, total: number): (number | string)[] {
+function getPageNumbers(current: number, total: number, isMobile: boolean): (number | string)[] {
+  if (total <= 1) return [1];
+
+  if (isMobile) {
+    if (total <= 4) {
+      return Array.from({ length: total }, (_, i) => i + 1);
+    }
+    if (current <= 2) {
+      return [1, 2, "...", total];
+    }
+    if (current >= total - 1) {
+      return [1, "...", total - 1, total];
+    }
+    return [1, "...", current, "...", total];
+  }
+
   if (total <= 7) {
     return Array.from({ length: total }, (_, i) => i + 1);
   }
@@ -107,6 +123,7 @@ const chip = (active: boolean) =>
 function ProdutosPage() {
   const storeProducts = useStoreProducts();
   const itemsPerPage = useItemsPerPage();
+  const isMobile = useIsMobile();
   const { q, cat, size, sort, min, max, page } = Route.useSearch();
   const navigate = useNavigate({ from: "/produtos" });
 
@@ -293,32 +310,33 @@ function ProdutosPage() {
               </div>
 
               {totalPages > 1 && (
-                <div className="mt-12 flex flex-col items-center justify-center gap-4 border-t border-border pt-8">
+                <div className="mt-8 sm:mt-12 flex flex-col items-center justify-center gap-3 sm:gap-4 border-t border-border pt-6 sm:pt-8 w-full overflow-hidden">
                   <Pagination>
-                    <PaginationContent>
+                    <PaginationContent className="flex-wrap justify-center gap-1">
                       <PaginationItem>
                         <button
                           type="button"
                           disabled={currentPage <= 1}
                           onClick={() => goToPage(currentPage - 1)}
-                          className={`flex items-center gap-1 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                          className={`flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-colors ${
                             currentPage <= 1
                               ? "pointer-events-none opacity-30"
                               : "text-foreground hover:bg-accent"
                           }`}
+                          aria-label="Página anterior"
                         >
                           <ChevronLeft className="size-4" />
-                          Anterior
+                          <span className="hidden sm:inline">Anterior</span>
                         </button>
                       </PaginationItem>
 
-                      {getPageNumbers(currentPage, totalPages).map((p, i) => (
+                      {getPageNumbers(currentPage, totalPages, isMobile).map((p, i) => (
                         <PaginationItem key={i}>
                           {typeof p === "number" ? (
                             <button
                               type="button"
                               onClick={() => goToPage(p)}
-                              className={`flex min-w-[36px] h-9 items-center justify-center px-3 text-xs font-bold transition-colors ${
+                              className={`flex min-w-[32px] sm:min-w-[36px] h-8 sm:h-9 items-center justify-center px-2 sm:px-3 text-xs font-bold transition-colors ${
                                 currentPage === p
                                   ? "border border-primary bg-primary text-primary-foreground"
                                   : "border border-border text-foreground hover:border-primary hover:text-primary"
@@ -327,7 +345,7 @@ function ProdutosPage() {
                               {p}
                             </button>
                           ) : (
-                            <span className="flex h-9 items-center px-2 text-xs font-bold text-muted-foreground">
+                            <span className="flex h-8 sm:h-9 items-center px-1 sm:px-2 text-xs font-bold text-muted-foreground">
                               ...
                             </span>
                           )}
@@ -339,13 +357,14 @@ function ProdutosPage() {
                           type="button"
                           disabled={currentPage >= totalPages}
                           onClick={() => goToPage(currentPage + 1)}
-                          className={`flex items-center gap-1 px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors ${
+                          className={`flex items-center gap-1 px-2 py-1.5 sm:px-3 sm:py-2 text-[11px] sm:text-xs font-semibold uppercase tracking-wider transition-colors ${
                             currentPage >= totalPages
                               ? "pointer-events-none opacity-30"
                               : "text-foreground hover:bg-accent"
                           }`}
+                          aria-label="Próxima página"
                         >
-                          Próxima
+                          <span className="hidden sm:inline">Próxima</span>
                           <ChevronRight className="size-4" />
                         </button>
                       </PaginationItem>
