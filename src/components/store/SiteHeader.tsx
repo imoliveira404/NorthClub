@@ -69,15 +69,22 @@ export function SiteHeader() {
 
           {/* Lado Direito: Minha Conta (Desktop) e Sacola */}
           <div className="flex flex-1 items-center justify-end gap-4 sm:gap-5">
-            {/* Minha conta (Desktop) */}
-            <div className="relative hidden sm:block">
+            {/* Minha conta / Login */}
+            <div className="relative">
               <button
                 type="button"
                 onClick={() => setAccountOpen((v) => !v)}
-                className="flex items-center gap-2 text-left text-xs leading-tight text-foreground"
+                className="flex items-center gap-1.5 sm:gap-2 text-left text-xs leading-tight text-foreground"
               >
-                <User className="size-6" />
-                <span>
+                <User className="size-5 sm:size-6 shrink-0" />
+                
+                {/* Mobile: Texto "Login" ou Nome de Usuário */}
+                <span className="text-[11px] font-bold uppercase tracking-wider text-foreground sm:hidden">
+                  {guestEmail ? guestEmail.split("@")[0] : "Login"}
+                </span>
+
+                {/* Desktop: Minha conta completo */}
+                <span className="hidden sm:inline-block">
                   {guestEmail ? (
                     <>
                       <strong className="block">Minha conta</strong>
@@ -95,13 +102,13 @@ export function SiteHeader() {
               </button>
 
               {accountOpen && (
-                <div className="absolute right-0 top-full z-50 mt-3 w-72 border border-border bg-card p-4 shadow-lg">
+                <div className="absolute right-0 top-full z-50 mt-3 w-72 max-w-[calc(100vw-2rem)] border border-border bg-card p-4 shadow-xl">
                   {guestEmail ? (
                     <>
                       <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                         Conectado como
                       </p>
-                      <p className="mt-1 truncate text-sm text-foreground">{guestEmail.split("@")[0]}</p>
+                      <p className="mt-1 truncate text-sm font-semibold text-foreground">{guestEmail.split("@")[0]}</p>
                       <button
                         type="button"
                         onClick={() => {
