@@ -273,15 +273,15 @@ function Home() {
         </section>
 
         {/* Banner Promocional Destaque */}
-        <section className="mx-auto max-w-7xl px-4 pt-10 pb-2">
+        <section className="mx-auto max-w-7xl px-0 sm:px-4 pt-6 sm:pt-10 pb-2">
           <ScrollReveal>
-            <div className="relative overflow-hidden rounded-none border border-border bg-card shadow-md transition-all hover:shadow-xl">
+            <div className="relative overflow-hidden rounded-none border-y sm:border border-border bg-card shadow-md transition-all hover:shadow-xl">
               <img
                 src={banner1}
                 alt="North Football Club — Novidades e Lançamentos Exclusivos"
                 loading="lazy"
                 decoding="async"
-                className="w-full h-auto object-cover max-h-[460px]"
+                className="w-full h-auto object-contain sm:object-cover sm:max-h-[460px]"
               />
             </div>
           </ScrollReveal>
