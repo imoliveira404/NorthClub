@@ -144,7 +144,7 @@ const BENEFITS = [
 ];
 
 const chip = (active: boolean) =>
-  `border px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+  `border px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
     active
       ? "border-primary bg-primary text-primary-foreground"
       : "border-border text-foreground hover:border-primary hover:text-primary"
@@ -265,14 +265,14 @@ function Home() {
             {BENEFITS.map(({ icon: Icon, title, text }) => (
               <div
                 key={title}
-                className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 sm:gap-3 border border-border/50 sm:border-0 bg-background/50 sm:bg-transparent p-3 sm:p-0"
+                className="flex items-center gap-2.5 sm:gap-3 rounded-none border border-border bg-card p-3 sm:p-4"
               >
                 <Icon className="size-6 sm:size-8 shrink-0 text-primary" />
                 <div>
-                  <p className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground leading-tight">
+                  <p className="text-[13px] sm:text-sm font-bold uppercase tracking-wide text-foreground leading-tight">
                     {title}
                   </p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground mt-0.5">{text}</p>
+                  <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">{text}</p>
                 </div>
               </div>
             ))}

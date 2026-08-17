@@ -49,11 +49,11 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-2.5 p-3 sm:gap-3 sm:p-4">
-        <h3 className="text-xs sm:text-sm font-semibold leading-snug text-foreground line-clamp-2">
+        <h3 className="text-[13px] sm:text-sm font-semibold leading-snug text-foreground line-clamp-2">
           {product.name}
         </h3>
 
-        <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-primary">
+        <p className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-primary">
           Até 10% OFF em quantidade
         </p>
 
@@ -63,8 +63,8 @@ export function ProductCard({ product }: { product: Product }) {
               {formatBRL(product.oldPrice)}
             </span>
           )}
-          <span className="font-display text-xl sm:text-2xl text-foreground">{formatBRL(product.price)}</span>
-          <span className="block text-[10px] sm:text-xs text-muted-foreground">
+          <span className="font-display text-2xl sm:text-2xl text-foreground">{formatBRL(product.price)}</span>
+          <span className="block text-[11px] sm:text-xs text-muted-foreground">
             ou 3x de {formatBRL(product.price / 3)} sem juros
           </span>
         </div>
@@ -74,7 +74,7 @@ export function ProductCard({ product }: { product: Product }) {
             <button
               key={s}
               onClick={() => setSize(s)}
-              className={`min-w-7 sm:min-w-9 border px-1.5 py-0.5 sm:px-2 sm:py-1 text-[10px] sm:text-[11px] font-bold uppercase transition-colors ${
+              className={`min-w-[32px] sm:min-w-9 h-7 sm:h-8 border px-1.5 text-[11px] sm:text-xs font-bold uppercase transition-colors flex items-center justify-center ${
                 size === s
                   ? "border-primary bg-primary text-primary-foreground"
                   : "border-border text-foreground hover:border-foreground"
@@ -89,7 +89,7 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={handleCartClick}
-            className="w-full bg-[#dc2626] py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#b91c1c]"
+            className="w-full h-9 sm:h-10 bg-[#dc2626] text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#b91c1c] flex items-center justify-center"
           >
             Remover
           </button>
@@ -97,13 +97,13 @@ export function ProductCard({ product }: { product: Product }) {
           <button
             type="button"
             onClick={handleCartClick}
-            className="w-full bg-foreground py-2.5 sm:py-3 text-[11px] sm:text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+            className="w-full h-9 sm:h-10 bg-foreground text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground flex items-center justify-center"
           >
             Adquirir
           </button>
         )}
 
-        <p className="text-center text-[10px] sm:text-[11px] text-muted-foreground">{product.stock} em estoque</p>
+        <p className="text-center text-[11px] sm:text-xs text-muted-foreground">{product.stock} em estoque</p>
       </div>
     </article>
   );

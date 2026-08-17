@@ -114,7 +114,7 @@ const SORTS = [
 ];
 
 const chip = (active: boolean) =>
-  `border px-4 py-2 text-[11px] font-bold uppercase tracking-widest transition-colors ${
+  `border px-3.5 py-2 text-xs font-bold uppercase tracking-wider transition-colors ${
     active
       ? "border-primary bg-primary text-primary-foreground"
       : "border-border text-foreground hover:border-primary hover:text-primary"
