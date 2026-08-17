@@ -1,0 +1,2 @@
+import{n as e}from"./products-DHdGhlSJ.js";var t=`5511966973200`,n=`+55 11 96697-3200`;function r(e){return`https://wa.me/${t}?text=${encodeURIComponent(e)}`}function i(t,n,r){return[`Olá! Quero finalizar esse pedido na North:`,``,...t.map((t,n)=>`${n+1}) ${t.name}\n   Ref.: ${t.id}\n   Tamanho: ${t.size}\n   Qtd: ${t.quantity}\n   Valor un.: ${e(t.price)}\n   Subtotal: ${e(t.price*t.quantity)}`),``,`Total: ${e(n)}`,r?`E-mail: ${r}`:``].filter(Boolean).join(`
+`)}export{i as n,r,n as t};

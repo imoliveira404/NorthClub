@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-BkSabwWG.js";var t=e(),n=()=>(0,t.jsx)(`div`,{className:`flex min-h-screen items-center justify-center bg-background px-4 text-center text-sm text-muted-foreground`,children:`Não conseguimos carregar a vitrine agora. Atualize a página em instantes.`});export{n as errorComponent};

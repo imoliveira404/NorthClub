@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-BkSabwWG.js";var t=e(),n=()=>(0,t.jsx)(`div`,{className:`flex min-h-screen items-center justify-center bg-background text-sm text-muted-foreground`,children:`Página não encontrada.`});export{n as notFoundComponent};
