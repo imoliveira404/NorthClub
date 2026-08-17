@@ -5,7 +5,29 @@ import { useCart } from "@/lib/cart";
 
 export function ProductCard({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[2] ?? product.sizes[0] ?? "M");
-  const { addItem } = useCart();
+  const { items, addItem, removeItem } = useCart();
+
+  const isInCart = items.some((i) => i.id === product.id && i.size === size);
+
+  const handleCartClick = () => {
+    if (isInCart) {
+      removeItem(product.id, size);
+      toast.info("Removido do carrinho", {
+        description: `${product.name} — tamanho ${size}`,
+      });
+    } else {
+      addItem({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        image: product.image,
+        size,
+      });
+      toast.success("Adicionado ao carrinho", {
+        description: `${product.name} — tamanho ${size}`,
+      });
+    }
+  };
 
   return (
     <article className="group flex flex-col border border-border bg-card">
@@ -61,23 +83,23 @@ export function ProductCard({ product }: { product: Product }) {
           ))}
         </div>
 
-        <button
-          onClick={() => {
-            addItem({
-              id: product.id,
-              name: product.name,
-              price: product.price,
-              image: product.image,
-              size,
-            });
-            toast.success("Adicionado ao carrinho", {
-              description: `${product.name} — tamanho ${size}`,
-            });
-          }}
-          className="w-full bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
-        >
-          Comprar
-        </button>
+        {isInCart ? (
+          <button
+            type="button"
+            onClick={handleCartClick}
+            className="w-full bg-[#dc2626] py-3 text-xs font-bold uppercase tracking-widest text-white transition-colors hover:bg-[#b91c1c]"
+          >
+            Remover
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={handleCartClick}
+            className="w-full bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+          >
+            Adquirir
+          </button>
+        )}
 
         <p className="text-center text-[11px] text-muted-foreground">{product.stock} em estoque</p>
       </div>

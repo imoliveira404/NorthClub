@@ -32,9 +32,10 @@ export const Route = createFileRoute("/checkout")({
 });
 
 function Cart() {
-  const { items, total, updateQuantity, removeItem } = useCart();
+  const { items, total, updateQuantity, removeItem, clear } = useCart();
   const { email: guestEmail, signIn } = useGuestAccount();
   const [emailInput, setEmailInput] = useState("");
+  const [confirmClearOpen, setConfirmClearOpen] = useState(false);
 
   function handleFinish() {
     if (items.length === 0) return;
@@ -51,21 +52,36 @@ function Cart() {
       <SiteHeader />
 
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
-          Seu carrinho
-        </h1>
-        <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-          <Lock className="size-4 text-primary" /> Atendimento e pagamento pelo WhatsApp{" "}
-          {WHATSAPP_DISPLAY}.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h1 className="font-display text-4xl uppercase tracking-tight text-foreground">
+              Seu carrinho
+            </h1>
+            <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+              <Lock className="size-4 text-primary" /> Atendimento e pagamento pelo WhatsApp{" "}
+              {WHATSAPP_DISPLAY}.
+            </p>
+          </div>
+
+          {items.length > 0 && (
+            <button
+              type="button"
+              onClick={() => setConfirmClearOpen(true)}
+              className="flex items-center gap-1.5 border border-border bg-card px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-muted-foreground transition-colors hover:border-destructive hover:text-destructive"
+            >
+              <Trash2 className="size-3.5" />
+              Esvaziar sacola
+            </button>
+          )}
+        </div>
 
         {items.length === 0 ? (
-          <div className="mt-10 border border-border bg-card p-8">
+          <div className="mt-10 border border-border bg-card p-8 text-center sm:text-left">
             <p className="text-sm text-muted-foreground">Seu carrinho está vazio.</p>
             <Link
               to="/"
-              search={{ q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0 }}
-              className="mt-6 inline-block bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground"
+              search={{ q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 }}
+              className="mt-6 inline-block bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground hover:opacity-90"
             >
               Ver produtos
             </Link>
@@ -92,16 +108,16 @@ function Cart() {
                         type="button"
                         aria-label="Diminuir quantidade"
                         onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
-                        className="border border-border p-1"
+                        className="border border-border p-1 hover:border-foreground"
                       >
                         <Minus className="size-3" />
                       </button>
-                      <span className="text-xs font-bold">{item.quantity}</span>
+                      <span className="text-xs font-bold px-1">{item.quantity}</span>
                       <button
                         type="button"
                         aria-label="Aumentar quantidade"
                         onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
-                        className="border border-border p-1"
+                        className="border border-border p-1 hover:border-foreground"
                       >
                         <Plus className="size-3" />
                       </button>
@@ -164,6 +180,44 @@ function Cart() {
           </div>
         )}
       </main>
+
+      {/* Modal de Confirmação para Esvaziar Sacola */}
+      {confirmClearOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-xs">
+          <div className="w-full max-w-md border-2 border-foreground bg-card p-6 shadow-2xl">
+            <h3 className="font-display text-lg uppercase tracking-tight text-foreground text-center">
+              Tem certeza que deseja esvaziar a sacola?
+            </h3>
+            <p className="mt-2 text-center text-xs text-muted-foreground">
+              Esta ação removerá todas as camisas do seu carrinho.
+            </p>
+
+            <div className="mt-6 flex items-center justify-between gap-4">
+              {/* Lado esquerdo: Não em rosa */}
+              <button
+                type="button"
+                onClick={() => setConfirmClearOpen(false)}
+                className="flex-1 bg-[#ec4899] py-3 text-xs font-bold uppercase tracking-widest text-white transition-opacity hover:opacity-90"
+              >
+                Não
+              </button>
+
+              {/* Lado direito: Sim */}
+              <button
+                type="button"
+                onClick={() => {
+                  clear();
+                  setConfirmClearOpen(false);
+                  toast.info("Sacola esvaziada");
+                }}
+                className="flex-1 border border-border bg-foreground py-3 text-xs font-bold uppercase tracking-widest text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+              >
+                Sim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <SiteFooter />
       <Toaster />
