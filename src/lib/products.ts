@@ -1,9 +1,9 @@
-import jersey1 from "@/assets/jersey-1.jpg";
-import jersey2 from "@/assets/jersey-2.jpg";
-import jersey3 from "@/assets/jersey-3.jpg";
-import jersey4 from "@/assets/jersey-4.jpg";
-import jersey5 from "@/assets/jersey-5.jpg";
-import jersey6 from "@/assets/jersey-6.jpg";
+import jersey1 from "@/assets/jersey-1.webp";
+import jersey2 from "@/assets/jersey-2.webp";
+import jersey3 from "@/assets/jersey-3.webp";
+import jersey4 from "@/assets/jersey-4.webp";
+import jersey5 from "@/assets/jersey-5.webp";
+import jersey6 from "@/assets/jersey-6.webp";
 
 export type Product = {
   id: string;

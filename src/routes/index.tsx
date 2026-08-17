@@ -28,7 +28,8 @@ import { useStoreProducts } from "@/lib/product-store";
 import { whatsappLink } from "@/lib/whatsapp";
 import { useItemsPerPage } from "@/hooks/use-items-per-page";
 import { useIsMobile } from "@/hooks/use-mobile";
-import heroStadium from "@/assets/hero-stadium.jpg";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
+import heroStadium from "@/assets/hero-stadium.webp";
 
 type CatalogSearch = {
   q: string;
@@ -237,6 +238,8 @@ function Home() {
           <img
             src={heroStadium}
             alt="Estádio de futebol iluminado à noite"
+            loading="eager"
+            fetchPriority="high"
             width={1920}
             height={1088}
             className="absolute inset-0 size-full object-cover opacity-45"
@@ -353,8 +356,10 @@ function Home() {
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {paginatedProducts.map((p) => (
-                  <ProductCard key={p.id} product={p} />
+                {paginatedProducts.map((p, idx) => (
+                  <ScrollReveal key={p.id} delay={(idx % 4) * 60}>
+                    <ProductCard product={p} />
+                  </ScrollReveal>
                 ))}
               </div>
 

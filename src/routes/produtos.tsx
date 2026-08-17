@@ -27,6 +27,7 @@ import {
 import { useStoreProducts } from "@/lib/product-store";
 import { useItemsPerPage } from "@/hooks/use-items-per-page";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { ScrollReveal } from "@/components/ui/scroll-reveal";
 
 type CatalogSearch = {
   q: string;
@@ -304,8 +305,10 @@ function ProdutosPage() {
           ) : (
             <>
               <div className="grid grid-cols-2 gap-3 sm:gap-5 sm:grid-cols-2 lg:grid-cols-4">
-                {paginatedProducts.map((p) => (
-                  <ProductCard key={p.id} product={p} />
+                {paginatedProducts.map((p, idx) => (
+                  <ScrollReveal key={p.id} delay={(idx % 4) * 60}>
+                    <ProductCard product={p} />
+                  </ScrollReveal>
                 ))}
               </div>
 
