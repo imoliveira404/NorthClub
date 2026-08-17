@@ -22,8 +22,8 @@ export const brasileirao: Product[] = [
   {
     id: "verde-i",
     name: "Camisa Listrada Verde I 2025/26 Torcedor Masculina",
-    price: 75,
-    oldPrice: 129,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey1,
     stock: 12,
     sizes: SIZES,
@@ -32,8 +32,8 @@ export const brasileirao: Product[] = [
   {
     id: "preto-branco-i",
     name: "Camisa Listrada Preto e Branco I 2025/26 Torcedor",
-    price: 75,
-    oldPrice: 129,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey2,
     stock: 4,
     sizes: SIZES,
@@ -41,7 +41,8 @@ export const brasileirao: Product[] = [
   {
     id: "azul-i",
     name: "Camisa Azul Royal I 2025/26 Torcedor Masculina",
-    price: 75,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey3,
     stock: 9,
     sizes: SIZES,
@@ -49,8 +50,8 @@ export const brasileirao: Product[] = [
   {
     id: "vermelho-i",
     name: "Camisa Vermelha e Preta I 2025/26 Torcedor Masculina",
-    price: 75,
-    oldPrice: 139,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey4,
     stock: 2,
     sizes: SIZES,
@@ -62,7 +63,8 @@ export const internacionais: Product[] = [
   {
     id: "branca-ii",
     name: "Camisa Branca Ouro II 2025/26 Torcedor Masculina",
-    price: 79,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey5,
     stock: 15,
     sizes: SIZES,
@@ -70,8 +72,8 @@ export const internacionais: Product[] = [
   {
     id: "amarela-i",
     name: "Camisa Amarela Seleção I 2025/26 Torcedor Masculina",
-    price: 89,
-    oldPrice: 149,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey6,
     stock: 7,
     sizes: SIZES,
@@ -80,7 +82,8 @@ export const internacionais: Product[] = [
   {
     id: "azul-ii",
     name: "Camisa Azul Treino 2025/26 Torcedor Masculina",
-    price: 69,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey3,
     stock: 21,
     sizes: SIZES,
@@ -88,7 +91,8 @@ export const internacionais: Product[] = [
   {
     id: "verde-ii",
     name: "Camisa Listrada Verde II 2025/26 Torcedor Masculina",
-    price: 75,
+    price: 139.90,
+    oldPrice: 179.90,
     image: jersey1,
     stock: 5,
     sizes: SIZES,
