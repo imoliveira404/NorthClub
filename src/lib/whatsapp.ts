@@ -8,18 +8,14 @@ export function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
 
-export function cartWhatsappMessage(
-  items: CartItem[],
-  total: number,
-  email?: string | null,
-) {
+export function cartWhatsappMessage(items: CartItem[], total: number, email?: string | null) {
   const lines = items.map(
     (i, index) =>
       `${index + 1}) ${i.name}\n   Ref.: ${i.id}\n   Tamanho: ${i.size}\n   Qtd: ${i.quantity}\n   Valor un.: ${formatBRL(i.price)}\n   Subtotal: ${formatBRL(i.price * i.quantity)}`,
   );
 
   return [
-    "Olá! Quero finalizar esse pedido na Futz:",
+    "Olá! Quero finalizar esse pedido na North:",
     "",
     ...lines,
     "",

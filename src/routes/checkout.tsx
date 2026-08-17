@@ -8,26 +8,21 @@ import { SiteFooter } from "@/components/store/SiteFooter";
 import { useCart } from "@/lib/cart";
 import { useGuestAccount } from "@/lib/guest-account";
 import { formatBRL } from "@/lib/products";
-import {
-  WHATSAPP_DISPLAY,
-  cartWhatsappMessage,
-  whatsappLink,
-} from "@/lib/whatsapp";
+import { WHATSAPP_DISPLAY, cartWhatsappMessage, whatsappLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/checkout")({
   head: () => ({
     meta: [
-      { title: "Carrinho | Futz — Finalize no WhatsApp" },
+      { title: "Carrinho | North — Finalize no WhatsApp" },
       {
         name: "description",
         content:
           "Revise as camisas do seu carrinho e finalize o pedido direto com nosso atendimento no WhatsApp.",
       },
-      { property: "og:title", content: "Carrinho | Futz" },
+      { property: "og:title", content: "Carrinho | North" },
       {
         property: "og:description",
-        content:
-          "Revise seu carrinho e finalize o pedido com nosso atendimento no WhatsApp.",
+        content: "Revise seu carrinho e finalize o pedido com nosso atendimento no WhatsApp.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -51,7 +46,6 @@ function Cart() {
     window.open(url, "_blank", "noopener,noreferrer");
   }
 
-
   return (
     <div className="min-h-screen bg-background">
       <SiteHeader />
@@ -61,18 +55,16 @@ function Cart() {
           Seu carrinho
         </h1>
         <p className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
-          <Lock className="size-4 text-primary" /> Atendimento e pagamento pelo
-          WhatsApp {WHATSAPP_DISPLAY}.
+          <Lock className="size-4 text-primary" /> Atendimento e pagamento pelo WhatsApp{" "}
+          {WHATSAPP_DISPLAY}.
         </p>
-
 
         {items.length === 0 ? (
           <div className="mt-10 border border-border bg-card p-8">
-            <p className="text-sm text-muted-foreground">
-              Seu carrinho está vazio.
-            </p>
+            <p className="text-sm text-muted-foreground">Seu carrinho está vazio.</p>
             <Link
               to="/"
+              search={{ q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0 }}
               className="mt-6 inline-block bg-primary px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary-foreground"
             >
               Ver produtos
@@ -87,24 +79,19 @@ function Cart() {
                     src={item.image}
                     alt={item.name}
                     loading="lazy"
+                    referrerPolicy="no-referrer"
                     width={80}
                     height={80}
                     className="size-20 shrink-0 object-cover"
                   />
                   <div className="flex-1">
-                    <p className="text-sm font-semibold text-foreground">
-                      {item.name}
-                    </p>
-                    <p className="text-[11px] uppercase text-muted-foreground">
-                      Tam. {item.size}
-                    </p>
+                    <p className="text-sm font-semibold text-foreground">{item.name}</p>
+                    <p className="text-[11px] uppercase text-muted-foreground">Tam. {item.size}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <button
                         type="button"
                         aria-label="Diminuir quantidade"
-                        onClick={() =>
-                          updateQuantity(item.id, item.size, item.quantity - 1)
-                        }
+                        onClick={() => updateQuantity(item.id, item.size, item.quantity - 1)}
                         className="border border-border p-1"
                       >
                         <Minus className="size-3" />
@@ -113,9 +100,7 @@ function Cart() {
                       <button
                         type="button"
                         aria-label="Aumentar quantidade"
-                        onClick={() =>
-                          updateQuantity(item.id, item.size, item.quantity + 1)
-                        }
+                        onClick={() => updateQuantity(item.id, item.size, item.quantity + 1)}
                         className="border border-border p-1"
                       >
                         <Plus className="size-3" />
@@ -141,9 +126,7 @@ function Cart() {
               <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                 Total
               </span>
-              <span className="font-display text-2xl text-foreground">
-                {formatBRL(total)}
-              </span>
+              <span className="font-display text-2xl text-foreground">{formatBRL(total)}</span>
             </div>
 
             {guestEmail ? (
@@ -175,11 +158,9 @@ function Cart() {
 
             <p className="mt-4 flex items-start gap-2 text-xs text-muted-foreground">
               <ShieldCheck className="mt-0.5 size-4 shrink-0 text-primary" />
-              Enviamos seu pedido com as referências, tamanhos e quantidades
-              para o atendimento {WHATSAPP_DISPLAY}, que finaliza o pagamento e
-              o frete com você.
+              Enviamos seu pedido com as referências, tamanhos e quantidades para o atendimento{" "}
+              {WHATSAPP_DISPLAY}, que finaliza o pagamento e o frete com você.
             </p>
-
           </div>
         )}
       </main>

@@ -7,10 +7,9 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
-import { useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
-import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CartProvider } from "@/lib/cart";
 
 function NotFoundComponent() {
@@ -25,6 +24,7 @@ function NotFoundComponent() {
         <div className="mt-6">
           <Link
             to="/"
+            search={{ q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0 }}
             className="inline-flex items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
           >
             Go home
@@ -38,9 +38,6 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
-  useEffect(() => {
-    reportLovableError(error, { boundary: "tanstack_root_error_component" });
-  }, [error]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -78,14 +75,19 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Futz | Camisas Tailandesas 1.1 a Pronta Entrega" },
-      { name: "description", content: "Camisas de time versão tailandesa 1.1 a pronta entrega, atacado e varejo com envio para todo o Brasil." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Futz | Camisas Tailandesas 1.1" },
-      { property: "og:description", content: "Camisas tailandesas 1.1 a pronta entrega, envio para todo o Brasil." },
+      { title: "North | Camisas Tailandesas 1.1 a Pronta Entrega" },
+      {
+        name: "description",
+        content:
+          "Camisas de time versão tailandesa 1.1 a pronta entrega, atacado e varejo com envio para todo o Brasil.",
+      },
+      { property: "og:title", content: "North | Camisas Tailandesas 1.1" },
+      {
+        property: "og:description",
+        content: "Camisas tailandesas 1.1 a pronta entrega, envio para todo o Brasil.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {
@@ -98,7 +100,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         rel: "stylesheet",
         href: "https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700&display=swap",
       },
-      { rel: "icon", href: "/favicon.ico", type: "image/x-icon" },
+      { rel: "icon", href: "/favicon.svg", type: "image/svg+xml" },
     ],
   }),
   shellComponent: RootShell,

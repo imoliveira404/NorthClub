@@ -1,26 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
-import {
-  ImagePlus,
-  Loader2,
-  LogOut,
-  Pencil,
-  Plus,
-  Save,
-  Trash2,
-  X,
-} from "lucide-react";
+import { ImagePlus, Loader2, Lock, LogOut, Pencil, Plus, Save, Trash2, X } from "lucide-react";
 import { toast } from "sonner";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
-import { OrdersPanel } from "@/components/admin/OrdersPanel";
 
 import { formatBRL } from "@/lib/products";
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/lib/use-session";
-import { claimAdminRole } from "@/lib/store.functions";
+import { adminSignIn, adminSignOut, isAdminAuthed } from "@/lib/admin-auth";
+import { deleteProduct, listProducts, seedProducts, upsertProduct } from "@/lib/product-store";
+import { compressImage } from "@/lib/image";
 import {
   CATEGORIES,
   SIZE_OPTIONS,
@@ -32,13 +21,13 @@ import {
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Painel de produtos | Futz" },
+      { title: "Painel de produtos | North" },
       {
         name: "description",
         content:
-          "Cadastre camisas com imagem, nome, preço, tamanhos, estoque e descrição no painel interno da Futz.",
+          "Cadastre camisas com imagem, nome, preço, tamanhos, estoque e descrição no painel interno da North.",
       },
-      { property: "og:title", content: "Painel de produtos | Futz" },
+      { property: "og:title", content: "Painel de produtos | North" },
       {
         property: "og:description",
         content: "Área interna para cadastro e edição do catálogo de camisas.",
@@ -62,101 +51,81 @@ function Label({ children }: { children: React.ReactNode }) {
 const inputClass =
   "w-full border border-border bg-card px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary";
 
-const SIGNED_URL_TTL = 60 * 60 * 24 * 365 * 5;
+function PasswordGate({ onSuccess }: { onSuccess: () => void }) {
+  const [password, setPassword] = useState("");
 
-type ProductRow = {
-  id: string;
-  name: string;
-  price: number | string;
-  old_price: number | string | null;
-  stock: number;
-  sizes: string[] | null;
-  badge: string | null;
-  category: string | null;
-  description: string | null;
-  image_url: string | null;
-  active: boolean;
-  created_at: string;
-};
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    if (!password.trim()) return;
+    if (!adminSignIn(password)) {
+      toast.error("Senha incorreta.");
+      setPassword("");
+      return;
+    }
+    toast.success("Acesso liberado!");
+    onSuccess();
+  }
 
-const rowToProduct = (row: ProductRow): AdminProduct => ({
-  id: row.id,
-  name: row.name,
-  price: Number(row.price),
-  oldPrice: row.old_price === null ? undefined : Number(row.old_price),
-  stock: Number(row.stock ?? 0),
-  sizes: row.sizes ?? [],
-  badge: row.badge ?? undefined,
-  category: row.category ?? "Time brasileiro",
-  description: row.description ?? "",
-  image: row.image_url ?? "",
-  active: row.active,
-  createdAt: row.created_at,
-});
+  return (
+    <main className="mx-auto flex max-w-md flex-col px-4 py-24">
+      <div className="flex items-center justify-center">
+        <Lock className="size-8 text-primary" />
+      </div>
+      <h1 className="mt-4 text-center font-display text-3xl uppercase tracking-tight text-foreground">
+        Painel de produtos
+      </h1>
+      <p className="mt-2 text-center text-sm text-muted-foreground">
+        Área interna da loja. Informe a senha de administrador para continuar.
+      </p>
+
+      <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+        <label className="block">
+          <span className="mb-1 block text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+            Senha
+          </span>
+          <input
+            className={inputClass}
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </label>
+        <button
+          type="submit"
+          className="w-full bg-foreground py-4 text-xs font-bold uppercase tracking-[0.2em] text-background transition-colors hover:bg-primary hover:text-primary-foreground"
+        >
+          Entrar no painel
+        </button>
+      </form>
+    </main>
+  );
+}
 
 function AdminPage() {
   const navigate = useNavigate();
-  const { session, loading: sessionLoading } = useSession();
-  const claimAdmin = useServerFn(claimAdminRole);
-
-  const [checkingRole, setCheckingRole] = useState(true);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [products, setProducts] = useState<AdminProduct[]>([]);
-  const [listLoading, setListLoading] = useState(false);
+  const [authed, setAuthed] = useState(false);
+  const [products, setProducts] = useState<AdminProduct[]>(() => seedProducts());
   const [draft, setDraft] = useState<AdminProductDraft>(emptyDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [tab, setTab] = useState<"produtos" | "pedidos">("produtos");
 
   const fileRef = useRef<HTMLInputElement>(null);
 
-  useEffect(() => {
-    if (!sessionLoading && !session) {
-      navigate({ to: "/auth", search: { redirect: "/admin" }, replace: true });
-    }
-  }, [session, sessionLoading, navigate]);
-
   const loadProducts = useCallback(async () => {
-    setListLoading(true);
-    const { data, error } = await supabase
-      .from("products")
-      .select(
-        "id, name, price, old_price, stock, sizes, badge, category, description, image_url, active, created_at",
-      )
-      .order("created_at", { ascending: false });
-    setListLoading(false);
-    if (error) {
-      toast.error("Não foi possível carregar os produtos", {
-        description: error.message,
-      });
-      return;
-    }
-    setProducts(((data ?? []) as ProductRow[]).map(rowToProduct));
+    const loaded = await listProducts();
+    setProducts(loaded);
   }, []);
 
   useEffect(() => {
-    if (!session) return;
-    let cancelled = false;
-    (async () => {
-      setCheckingRole(true);
-      await claimAdmin().catch(() => undefined);
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id)
-        .eq("role", "admin")
-        .maybeSingle();
-      if (cancelled) return;
-      const admin = Boolean(data);
-      setIsAdmin(admin);
-      setCheckingRole(false);
-      if (admin) void loadProducts();
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [session, claimAdmin, loadProducts]);
+    setAuthed(isAdminAuthed());
+  }, []);
+
+  useEffect(() => {
+    if (!authed) return;
+    void loadProducts();
+  }, [authed, loadProducts]);
 
   function resetForm() {
     setDraft(emptyDraft());
@@ -167,46 +136,33 @@ function AdminPage() {
   function toggleSize(size: string) {
     setDraft((d) => ({
       ...d,
-      sizes: d.sizes.includes(size)
-        ? d.sizes.filter((s) => s !== size)
-        : [...d.sizes, size],
+      sizes: d.sizes.includes(size) ? d.sizes.filter((s) => s !== size) : [...d.sizes, size],
     }));
   }
 
-  async function handleImage(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleImage(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       toast.error("Selecione um arquivo de imagem.");
       return;
     }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Imagem muito grande", { description: "Limite de 5 MB." });
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Imagem muito grande", { description: "Limite de 10 MB antes da compactação." });
       return;
     }
     setUploading(true);
-    try {
-      const ext = file.name.split(".").pop()?.toLowerCase() ?? "jpg";
-      const path = `${session?.user.id}/${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2, 8)}.${ext}`;
-      const { error: uploadError } = await supabase.storage
-        .from("product-images")
-        .upload(path, file, { contentType: file.type, upsert: false });
-      if (uploadError) throw uploadError;
-      const { data, error: signError } = await supabase.storage
-        .from("product-images")
-        .createSignedUrl(path, SIGNED_URL_TTL);
-      if (signError || !data) throw signError ?? new Error("URL não gerada");
-      setDraft((d) => ({ ...d, image: data.signedUrl }));
-      toast.success("Imagem enviada");
-    } catch (error) {
-      toast.error("Não foi possível enviar a imagem", {
-        description: error instanceof Error ? error.message : undefined,
-      });
-    } finally {
-      setUploading(false);
-    }
+    compressImage(file)
+      .then((dataUrl) => {
+        setDraft((d) => ({ ...d, image: dataUrl }));
+        toast.success("Imagem adicionada", {
+          description: "Compactada automaticamente para não pesar a loja.",
+        });
+      })
+      .catch(() => {
+        toast.error("Não foi possível processar a imagem.");
+      })
+      .finally(() => setUploading(false));
   }
 
   async function handleSubmit(event: React.FormEvent) {
@@ -229,27 +185,27 @@ function AdminPage() {
       return;
     }
 
-    const payload = {
+    const payload: AdminProductDraft = {
       name,
       price: draft.price,
-      old_price: draft.oldPrice ?? null,
+      ...(draft.oldPrice !== undefined ? { oldPrice: draft.oldPrice } : {}),
       stock: draft.stock,
       sizes: draft.sizes,
-      badge: draft.badge?.trim() ? draft.badge.trim().slice(0, 40) : null,
+      ...(draft.badge && draft.badge.trim() ? { badge: draft.badge.trim().slice(0, 40) } : {}),
       category: draft.category,
       description: draft.description.trim().slice(0, 1200),
-      image_url: draft.image,
+      image: draft.image,
       active: draft.active,
     };
 
     setSaving(true);
-    const { error } = editingId
-      ? await supabase.from("products").update(payload).eq("id", editingId)
-      : await supabase.from("products").insert(payload);
+    const saved = await upsertProduct(payload, editingId ?? undefined);
     setSaving(false);
 
-    if (error) {
-      toast.error("Não foi possível salvar", { description: error.message });
+    if (!saved) {
+      toast.error("Não foi possível salvar", {
+        description: "Não foi possível acessar o armazenamento do navegador.",
+      });
       return;
     }
     toast.success(editingId ? "Produto atualizado" : "Produto cadastrado");
@@ -275,9 +231,10 @@ function AdminPage() {
   }
 
   async function remove(id: string) {
-    const { error } = await supabase.from("products").delete().eq("id", id);
-    if (error) {
-      toast.error("Não foi possível remover", { description: error.message });
+    if (!(await deleteProduct(id))) {
+      toast.error("Não foi possível remover", {
+        description: "Não foi possível acessar o armazenamento do navegador.",
+      });
       return;
     }
     if (editingId === id) resetForm();
@@ -285,37 +242,22 @@ function AdminPage() {
     void loadProducts();
   }
 
-  if (sessionLoading || (session && checkingRole)) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
-        <Loader2 className="size-6 animate-spin text-muted-foreground" />
-      </div>
-    );
+  function handleLogout() {
+    adminSignOut();
+    setAuthed(false);
+    resetForm();
+    navigate({
+      to: "/",
+      search: { q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0 },
+      replace: true,
+    });
   }
 
-  if (session && !isAdmin) {
+  if (!authed) {
     return (
       <div className="min-h-screen bg-background">
         <SiteHeader />
-        <main className="mx-auto max-w-xl px-4 py-24 text-center">
-          <h1 className="font-display text-3xl uppercase text-foreground">
-            Acesso restrito
-          </h1>
-          <p className="mt-3 text-sm text-muted-foreground">
-            A conta <strong>{session.user.email}</strong> não tem permissão de
-            administrador. Entre com a conta de administrador da loja.
-          </p>
-          <button
-            type="button"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate({ to: "/auth", search: { redirect: "/admin" }, replace: true });
-            }}
-            className="mt-6 inline-flex items-center gap-2 border border-border px-5 py-3 text-xs font-bold uppercase tracking-widest text-foreground hover:border-primary"
-          >
-            <LogOut className="size-4" /> Trocar de conta
-          </button>
-        </main>
+        <PasswordGate onSuccess={() => setAuthed(true)} />
         <SiteFooter />
         <Toaster />
       </div>
@@ -333,48 +275,20 @@ function AdminPage() {
               Painel de produtos
             </h1>
             <p className="mt-2 max-w-2xl text-sm text-muted-foreground">
-              Cadastre camisas com imagem, nome, preço, tamanhos, estoque e
-              descrição. Tudo salvo no banco e publicado na vitrine
-              automaticamente.
+              Cadastre camisas com imagem, nome, preço, tamanhos, estoque e descrição. Imagens são
+              compactadas e tudo fica salvo no navegador, publicado na vitrine automaticamente.
             </p>
           </div>
           <button
             type="button"
-            onClick={async () => {
-              await supabase.auth.signOut();
-              navigate({ to: "/", replace: true });
-            }}
+            onClick={handleLogout}
             className="flex items-center gap-2 border border-border px-4 py-2.5 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-primary"
           >
             <LogOut className="size-3.5" /> Sair
           </button>
         </div>
 
-        <div className="mt-8 flex flex-wrap gap-2">
-          {(
-            [
-              { value: "produtos", label: "Produtos" },
-              { value: "pedidos", label: "Pedidos" },
-            ] as const
-          ).map((t) => (
-            <button
-              key={t.value}
-              type="button"
-              onClick={() => setTab(t.value)}
-              className={`border px-5 py-3 text-[11px] font-bold uppercase tracking-widest transition-colors ${
-                tab === t.value
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border text-foreground hover:border-primary"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {tab === "produtos" ? (
-          <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
-
+        <div className="mt-10 grid gap-8 lg:grid-cols-[1fr_1fr]">
           <form
             onSubmit={handleSubmit}
             className="h-fit space-y-6 border border-border bg-card p-6"
@@ -404,6 +318,7 @@ function AdminPage() {
                     <img
                       src={draft.image}
                       alt="Pré-visualização do produto"
+                      referrerPolicy="no-referrer"
                       className="size-28 object-cover"
                     />
                   ) : (
@@ -419,8 +334,8 @@ function AdminPage() {
                     className="w-full text-xs text-muted-foreground file:mr-3 file:border file:border-border file:bg-secondary file:px-3 file:py-2 file:text-[11px] file:font-bold file:uppercase file:tracking-widest file:text-foreground"
                   />
                   <p className="mt-2 text-[11px] text-muted-foreground">
-                    JPG ou PNG, até 5 MB. Proporção quadrada fica melhor na
-                    vitrine.
+                    JPG ou PNG, até 10 MB. A imagem é compactada para no máximo 1000px e convertida
+                    para WebP antes de salvar.
                   </p>
                   {draft.image && (
                     <button
@@ -457,9 +372,7 @@ function AdminPage() {
                   min={0}
                   step="0.01"
                   value={draft.price || ""}
-                  onChange={(e) =>
-                    setDraft({ ...draft, price: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDraft({ ...draft, price: Number(e.target.value) })}
                 />
               </label>
               <label className="block">
@@ -473,9 +386,7 @@ function AdminPage() {
                   onChange={(e) =>
                     setDraft({
                       ...draft,
-                      oldPrice: e.target.value
-                        ? Number(e.target.value)
-                        : undefined,
+                      oldPrice: e.target.value ? Number(e.target.value) : undefined,
                     })
                   }
                 />
@@ -488,9 +399,7 @@ function AdminPage() {
                   min={0}
                   step={1}
                   value={draft.stock}
-                  onChange={(e) =>
-                    setDraft({ ...draft, stock: Number(e.target.value) })
-                  }
+                  onChange={(e) => setDraft({ ...draft, stock: Number(e.target.value) })}
                 />
               </label>
             </div>
@@ -522,9 +431,7 @@ function AdminPage() {
                 <select
                   className={inputClass}
                   value={draft.category}
-                  onChange={(e) =>
-                    setDraft({ ...draft, category: e.target.value })
-                  }
+                  onChange={(e) => setDraft({ ...draft, category: e.target.value })}
                 >
                   {CATEGORIES.map((c) => (
                     <option key={c} value={c}>
@@ -552,9 +459,7 @@ function AdminPage() {
                 maxLength={1200}
                 placeholder="Material, caimento, detalhes de acabamento e prazo de envio."
                 value={draft.description}
-                onChange={(e) =>
-                  setDraft({ ...draft, description: e.target.value })
-                }
+                onChange={(e) => setDraft({ ...draft, description: e.target.value })}
               />
             </label>
 
@@ -585,22 +490,15 @@ function AdminPage() {
 
           <section className="h-fit border border-border bg-card p-6">
             <div className="flex items-baseline justify-between">
-              <h2 className="font-display text-xl uppercase text-foreground">
-                Cadastrados
-              </h2>
+              <h2 className="font-display text-xl uppercase text-foreground">Cadastrados</h2>
               <span className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                 {products.length} itens
               </span>
             </div>
 
-            {listLoading ? (
-              <div className="mt-6 flex justify-center">
-                <Loader2 className="size-5 animate-spin text-muted-foreground" />
-              </div>
-            ) : products.length === 0 ? (
+            {products.length === 0 ? (
               <p className="mt-6 text-sm text-muted-foreground">
-                Nenhum produto cadastrado ainda. Use o formulário ao lado para
-                criar o primeiro.
+                Nenhum produto cadastrado ainda. Use o formulário ao lado para criar o primeiro.
               </p>
             ) : (
               <ul className="mt-4 divide-y divide-border">
@@ -610,6 +508,7 @@ function AdminPage() {
                       src={product.image}
                       alt={product.name}
                       loading="lazy"
+                      referrerPolicy="no-referrer"
                       className="size-16 shrink-0 object-cover"
                     />
                     <div className="flex-1">
@@ -622,8 +521,7 @@ function AdminPage() {
                         )}
                       </p>
                       <p className="mt-1 text-[11px] uppercase text-muted-foreground">
-                        {product.category} · {product.sizes.join(", ")} ·{" "}
-                        {product.stock} em estoque
+                        {product.category} · {product.sizes.join(", ")} · {product.stock} em estoque
                       </p>
                       {product.description && (
                         <p className="mt-1 line-clamp-2 text-[11px] text-muted-foreground">
@@ -662,14 +560,8 @@ function AdminPage() {
               </ul>
             )}
           </section>
-          </div>
-        ) : (
-          <div className="mt-10">
-            <OrdersPanel />
-          </div>
-        )}
+        </div>
       </main>
-
 
       <SiteFooter />
       <Toaster />

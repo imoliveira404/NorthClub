@@ -1,24 +1,44 @@
 # Hello Friend
 
-olá
+Loja de camisas de futebol (North) construída com TanStack Start.
 
-This project was built with [Lovable](https://lovable.dev).
+## Funcionalidades
 
-## Build with Lovable
+- Vitrine com catálogo de produtos, busca e filtros.
+- Carrinho e checkout via WhatsApp.
+- Painel `/admin` para cadastrar e editar produtos — salvo no navegador
+  (localStorage), protegido por senha simples.
+- Integração com Mercado Pago (server functions).
 
-Continue developing this project in the [Lovable editor](https://lovable.dev/projects/5d2b4359-efb2-4d29-a4fa-bf12c1f01a36).
+## Desenvolvimento
 
-- **Ship faster**: describe what you want to build and Lovable handles the code.
-- **Stay in sync**: every change made in Lovable is committed straight to this repository.
-- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
-
-## Development
-
-Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
+Você precisa de Node.js e npm.
 
 ```sh
-git clone <this-repository-url>
-cd <repository-name>
-npm i
+npm install
 npm run dev
 ```
+
+O servidor de desenvolvimento fica disponível em http://localhost:3000.
+
+## Scripts
+
+| Comando           | Descrição                   |
+| ----------------- | --------------------------- |
+| `npm run dev`     | Servidor de desenvolvimento |
+| `npm run build`   | Build de produção           |
+| `npm run preview` | Pré-visualiza o build       |
+| `npm run lint`    | Lint com ESLint             |
+
+## Painel admin
+
+Acesse `/admin` e use a senha de administrador. A senha padrão é `futz-admin` e
+pode ser alterada com a variável de ambiente `VITE_ADMIN_PASSWORD` (veja o
+`.env.example`). Produtos e imagens ficam salvos apenas no navegador usado para
+gerenciar o painel.
+
+## Variáveis de ambiente
+
+Copie o `.env.example` para `.env` e preencha apenas o que for usar. A loja
+funciona sem nenhuma variável; elas só habilitam o pagamento pelo Mercado Pago
+e a senha customizada do painel.

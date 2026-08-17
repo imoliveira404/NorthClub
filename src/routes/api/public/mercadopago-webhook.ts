@@ -17,8 +17,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
         if (secret) {
           const signature = request.headers.get("x-signature") ?? "";
           const requestId = request.headers.get("x-request-id") ?? "";
-          const dataId =
-            new URL(request.url).searchParams.get("data.id") ?? "";
+          const dataId = new URL(request.url).searchParams.get("data.id") ?? "";
           const parts = Object.fromEntries(
             signature
               .split(",")
@@ -28,9 +27,7 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
 
           const manifest = `id:${dataId};request-id:${requestId};ts:${parts["ts"] ?? ""};`;
           const { createHmac, timingSafeEqual } = await import("crypto");
-          const expected = createHmac("sha256", secret)
-            .update(manifest)
-            .digest("hex");
+          const expected = createHmac("sha256", secret).update(manifest).digest("hex");
           const received = parts["v1"] ?? "";
 
           const valid =
@@ -61,8 +58,6 @@ export const Route = createFileRoute("/api/public/mercadopago-webhook")({
           id: parsed.data.data?.id,
         });
 
-        // Aqui é o ponto de integração para atualizar o pedido no banco
-        // quando o app tiver persistência habilitada.
         return new Response("ok", { status: 200 });
       },
     },

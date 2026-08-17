@@ -28,9 +28,9 @@ const inputSchema = z.object({
 
 const toAmount = (value: number) => value.toFixed(2);
 
-export const getMercadoPagoPublicKey = createServerFn({ method: "GET" }).handler(
-  async () => ({ publicKey: process.env["MERCADOPAGO_PUBLIC_KEY"] ?? "" }),
-);
+export const getMercadoPagoPublicKey = createServerFn({ method: "GET" }).handler(async () => ({
+  publicKey: process.env["MERCADOPAGO_PUBLIC_KEY"] ?? "",
+}));
 
 export const createMercadoPagoOrder = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => inputSchema.parse(data))
@@ -56,7 +56,7 @@ export const createMercadoPagoOrder = createServerFn({ method: "POST" })
               type: "credit_card" as const,
               token: data.cardToken!,
               installments: data.installments ?? 1,
-              statement_descriptor: "FUTZ",
+              statement_descriptor: "NORTH",
             },
           };
 
@@ -72,7 +72,7 @@ export const createMercadoPagoOrder = createServerFn({ method: "POST" })
         processing_mode: "automatic",
         external_reference: externalReference,
         total_amount: toAmount(total),
-        description: "Pedido Futz",
+        description: "Pedido North",
         payer: {
           email: data.payer.email,
           first_name: data.payer.firstName,
@@ -90,21 +90,6 @@ export const createMercadoPagoOrder = createServerFn({ method: "POST" })
     });
 
     const mpPayment = order.transactions?.payments?.[0];
-
-    try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin.from("orders").insert({
-        email: data.payer.email,
-        full_name: `${data.payer.firstName} ${data.payer.lastName}`.trim(),
-        items: data.items,
-        total,
-        payment_method: data.method,
-        status: mpPayment?.status ?? order.status ?? "pending",
-        mp_order_id: String(order.id),
-      });
-    } catch (error) {
-      console.error("[orders] falha ao registrar pedido", error);
-    }
 
     return {
       orderId: order.id,
@@ -150,7 +135,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
       idempotencyKey: externalReference,
       body: {
         external_reference: externalReference,
-        statement_descriptor: "FUTZ",
+        statement_descriptor: "NORTH",
         items: data.items.map((item) => ({
           id: item.id,
           title: `${item.name} (${item.size})`,
@@ -162,9 +147,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
           email: data.payer.email,
           name: data.payer.firstName,
           surname: data.payer.lastName,
-          ...(data.payer.cpf
-            ? { identification: { type: "CPF", number: data.payer.cpf } }
-            : {}),
+          ...(data.payer.cpf ? { identification: { type: "CPF", number: data.payer.cpf } } : {}),
         },
         back_urls: {
           success: `${data.origin}/checkout?status=success`,
@@ -176,21 +159,6 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
       },
     });
 
-    try {
-      const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-      await supabaseAdmin.from("orders").insert({
-        email: data.payer.email,
-        full_name: `${data.payer.firstName ?? ""} ${data.payer.lastName ?? ""}`.trim(),
-        items: data.items,
-        total,
-        payment_method: "checkout_pro",
-        status: "pending",
-        mp_order_id: String(preference.id),
-      });
-    } catch (error) {
-      console.error("[orders] falha ao registrar pedido", error);
-    }
-
     return {
       preferenceId: preference.id,
       externalReference,
@@ -200,9 +168,7 @@ export const createMercadoPagoPreference = createServerFn({ method: "POST" })
   });
 
 export const getMercadoPagoOrder = createServerFn({ method: "POST" })
-  .inputValidator((data: unknown) =>
-    z.object({ orderId: z.string().min(3).max(64) }).parse(data),
-  )
+  .inputValidator((data: unknown) => z.object({ orderId: z.string().min(3).max(64) }).parse(data))
   .handler(async ({ data }) => {
     const { mpRequest } = await import("@/lib/mercadopago.server");
     const order = await mpRequest<MpOrder>(`/v1/orders/${data.orderId}`, {

@@ -21,11 +21,11 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 md:grid-cols-4">
         <div>
           <span className="font-display text-3xl uppercase">
-            Futz<span className="text-primary">.</span>
+            North<span className="text-primary">.</span>
           </span>
           <p className="mt-3 max-w-xs text-sm text-background/70">
-            Fornecedor de camisas de time versão tailandesa 1.1 a pronta
-            entrega. Atacado e varejo, direto do Brasil.
+            Fornecedor de camisas de time versão tailandesa 1.1 a pronta entrega. Atacado e varejo,
+            direto do Brasil.
           </p>
         </div>
 
@@ -50,11 +50,7 @@ export function SiteFooter() {
           <h3 className="text-xs font-bold uppercase tracking-widest text-primary">
             Receba as novidades
           </h3>
-          <form
-            className="mt-4 flex"
-            onSubmit={(e) => e.preventDefault()}
-            aria-label="Newsletter"
-          >
+          <form className="mt-4 flex" onSubmit={(e) => e.preventDefault()} aria-label="Newsletter">
             <input
               type="email"
               required
@@ -73,8 +69,7 @@ export function SiteFooter() {
       </div>
 
       <div className="border-t border-background/15 py-5 text-center text-xs text-background/60">
-        © {new Date().getFullYear()} Futz — Camisas tailandesas 1.1. Loja
-        demonstrativa.
+        © {new Date().getFullYear()} North — Camisas tailandesas 1.1. Loja demonstrativa.
       </div>
     </footer>
   );

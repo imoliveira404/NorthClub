@@ -4,8 +4,6 @@ import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useGuestAccount } from "@/lib/guest-account";
 
-
-
 const ANNOUNCEMENTS = [
   "DIRETO DO BRASIL E SEM TAXA",
   "ACIMA DE 3 PEÇAS: ATÉ 10% OFF",
@@ -15,13 +13,10 @@ const ANNOUNCEMENTS = [
 const NAV = [
   "Início",
   "Produtos",
-  "Blog",
   "Contato",
-  "Tabela de medidas",
   "Como comprar",
   "Trocas e devoluções",
   "Quem somos",
-  "Rastreio",
 ];
 
 export function SiteHeader() {
@@ -32,7 +27,6 @@ export function SiteHeader() {
   const [index, setIndex] = useState(0);
   const [term, setTerm] = useState("");
   const navigate = useNavigate();
-
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,10 +41,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    const id = setInterval(
-      () => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length),
-      4000,
-    );
+    const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
     return () => clearInterval(id);
   }, []);
 
@@ -70,10 +61,7 @@ export function SiteHeader() {
             {open ? <X className="size-6" /> : <Menu className="size-6" />}
           </button>
 
-          <form
-            className="relative hidden flex-1 lg:block"
-            onSubmit={submitSearch}
-          >
+          <form className="relative hidden flex-1 lg:block" onSubmit={submitSearch}>
             <input
               type="search"
               placeholder="O que você está buscando?"
@@ -89,7 +77,7 @@ export function SiteHeader() {
             href="/"
             className="mx-auto font-display text-3xl uppercase tracking-tight text-foreground"
           >
-            Futz<span className="text-primary">.</span>
+            North<span className="text-primary">.</span>
           </a>
 
           <div className="flex flex-1 items-center justify-end gap-5">
@@ -111,9 +99,7 @@ export function SiteHeader() {
                   ) : (
                     <>
                       <strong className="block">Olá! Faça login</strong>
-                      <span className="text-muted-foreground">
-                        Só com seu e-mail
-                      </span>
+                      <span className="text-muted-foreground">Só com seu e-mail</span>
                     </>
                   )}
                 </span>
@@ -126,9 +112,7 @@ export function SiteHeader() {
                       <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                         Conectado como
                       </p>
-                      <p className="mt-1 truncate text-sm text-foreground">
-                        {guestEmail}
-                      </p>
+                      <p className="mt-1 truncate text-sm text-foreground">{guestEmail}</p>
                       <button
                         type="button"
                         onClick={() => {
@@ -173,14 +157,12 @@ export function SiteHeader() {
               )}
             </div>
 
-
             <Link to="/checkout" className="relative text-foreground" aria-label="Carrinho">
               <ShoppingCart className="size-6" />
               <span className="absolute -right-2 -top-2 flex size-5 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
                 {count}
               </span>
             </Link>
-
           </div>
         </div>
 

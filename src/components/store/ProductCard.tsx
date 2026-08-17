@@ -7,7 +7,6 @@ export function ProductCard({ product }: { product: Product }) {
   const [size, setSize] = useState(product.sizes[2] ?? product.sizes[0] ?? "M");
   const { addItem } = useCart();
 
-
   return (
     <article className="group flex flex-col border border-border bg-card">
       <div className="relative overflow-hidden bg-secondary">
@@ -20,6 +19,7 @@ export function ProductCard({ product }: { product: Product }) {
           src={product.image}
           alt={product.name}
           loading="lazy"
+          referrerPolicy="no-referrer"
           width={800}
           height={800}
           className="aspect-square w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -27,9 +27,7 @@ export function ProductCard({ product }: { product: Product }) {
       </div>
 
       <div className="flex flex-1 flex-col gap-3 p-4">
-        <h3 className="text-sm font-semibold leading-snug text-foreground">
-          {product.name}
-        </h3>
+        <h3 className="text-sm font-semibold leading-snug text-foreground">{product.name}</h3>
 
         <p className="text-[11px] font-bold uppercase tracking-wider text-primary">
           Até 10% OFF em quantidade
@@ -41,9 +39,7 @@ export function ProductCard({ product }: { product: Product }) {
               {formatBRL(product.oldPrice)}
             </span>
           )}
-          <span className="font-display text-2xl text-foreground">
-            {formatBRL(product.price)}
-          </span>
+          <span className="font-display text-2xl text-foreground">{formatBRL(product.price)}</span>
           <span className="block text-xs text-muted-foreground">
             ou 3x de {formatBRL(product.price / 3)} sem juros
           </span>
@@ -83,9 +79,7 @@ export function ProductCard({ product }: { product: Product }) {
           Comprar
         </button>
 
-        <p className="text-center text-[11px] text-muted-foreground">
-          {product.stock} em estoque
-        </p>
+        <p className="text-center text-[11px] text-muted-foreground">{product.stock} em estoque</p>
       </div>
     </article>
   );

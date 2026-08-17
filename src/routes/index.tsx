@@ -1,21 +1,23 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { BadgeCheck, PackageCheck, ShieldCheck, Truck } from "lucide-react";
+import {
+  BadgeCheck,
+  PackageCheck,
+  ShieldCheck,
+  Truck,
+} from "lucide-react";
 import { Toaster } from "@/components/ui/sonner";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
 import { FilterPanel } from "@/components/store/FilterPanel";
-import {
-  brasileirao,
-  internacionais,
-  type Product,
-} from "@/lib/products";
+import { type Product } from "@/lib/products";
 import {
   CATEGORIES,
   SIZE_OPTIONS,
   KID_SIZE_OPTIONS,
+  type AdminProduct,
 } from "@/lib/admin-products";
-import { listStoreProducts, type StoreProduct } from "@/lib/store.functions";
+import { useStoreProducts } from "@/lib/product-store";
 import { whatsappLink } from "@/lib/whatsapp";
 import heroStadium from "@/assets/hero-stadium.jpg";
 
@@ -37,10 +39,9 @@ export const Route = createFileRoute("/")({
     min: Number(search["min"]) > 0 ? Number(search["min"]) : 0,
     max: Number(search["max"]) > 0 ? Number(search["max"]) : 0,
   }),
-  loader: async () => ({ products: await listStoreProducts() }),
   head: () => ({
     meta: [
-      { title: "Futz | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
+      { title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega" },
       {
         name: "description",
         content:
@@ -48,7 +49,7 @@ export const Route = createFileRoute("/")({
       },
       {
         property: "og:title",
-        content: "Futz | Camisas de Time Tailandesas 1.1",
+        content: "North | Camisas de Time Tailandesas 1.1",
       },
       {
         property: "og:description",
@@ -74,34 +75,18 @@ export const Route = createFileRoute("/")({
 
 type CatalogItem = Product & { category: string; createdIndex: number };
 
-const toCatalogItem = (
-  item: StoreProduct,
-  index: number,
-): CatalogItem => ({
+const toCatalogItem = (item: AdminProduct, index: number): CatalogItem => ({
   id: item.id,
   name: item.name,
   price: item.price,
-  ...(item.oldPrice ? { oldPrice: item.oldPrice } : {}),
+  ...(item.oldPrice !== undefined ? { oldPrice: item.oldPrice } : {}),
   image: item.image,
   stock: item.stock,
   sizes: item.sizes,
-  ...(item.badge ? { badge: item.badge } : {}),
+  ...(item.badge !== undefined ? { badge: item.badge } : {}),
   category: item.category,
   createdIndex: index,
 });
-
-const fallbackCatalog: CatalogItem[] = [
-  ...brasileirao.map((p, i) => ({
-    ...p,
-    category: "Time brasileiro",
-    createdIndex: i,
-  })),
-  ...internacionais.map((p, i) => ({
-    ...p,
-    category: "Europeu",
-    createdIndex: brasileirao.length + i,
-  })),
-];
 
 const SORTS = [
   { value: "recentes", label: "Mais recentes" },
@@ -125,7 +110,7 @@ const chip = (active: boolean) =>
   }`;
 
 function Home() {
-  const { products } = Route.useLoaderData() as { products: StoreProduct[] };
+  const storeProducts = useStoreProducts();
   const { q, cat, size, sort, min, max } = Route.useSearch();
   const navigate = useNavigate({ from: "/" });
 
@@ -135,25 +120,20 @@ function Home() {
     });
   };
 
-  const catalog: CatalogItem[] =
-    products.length > 0 ? products.map(toCatalogItem) : fallbackCatalog;
+  const catalog: CatalogItem[] = storeProducts.map(toCatalogItem);
 
   const availableCategories = CATEGORIES.filter((c) =>
     catalog.some((item) => item.category === c),
   ).concat(
-    [...new Set(catalog.map((i) => i.category))].filter(
-      (c) => c && !CATEGORIES.includes(c),
-    ),
+    [...new Set(catalog.map((i) => i.category))].filter((c) => c && !CATEGORIES.includes(c)),
   );
 
   const sizeOrder = [...SIZE_OPTIONS, ...KID_SIZE_OPTIONS];
-  const availableSizes = [...new Set(catalog.flatMap((i) => i.sizes))].sort(
-    (a, b) => {
-      const ia = sizeOrder.indexOf(a);
-      const ib = sizeOrder.indexOf(b);
-      return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
-    },
-  );
+  const availableSizes = [...new Set(catalog.flatMap((i) => i.sizes))].sort((a, b) => {
+    const ia = sizeOrder.indexOf(a);
+    const ib = sizeOrder.indexOf(b);
+    return (ia < 0 ? 99 : ia) - (ib < 0 ? 99 : ib);
+  });
 
   const term = q.trim().toLowerCase();
   const filtered = catalog
@@ -175,8 +155,7 @@ function Home() {
       return a.createdIndex - b.createdIndex;
     });
 
-  const activeCount =
-    (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
+  const activeCount = (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
 
   return (
     <div className="min-h-screen bg-background">
@@ -244,7 +223,6 @@ function Home() {
           </div>
         </section>
 
-
         <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
             <div>
@@ -292,7 +270,6 @@ function Home() {
             </div>
           </div>
 
-
           {filtered.length === 0 ? (
             <p className="py-10 text-center text-sm text-muted-foreground">
               Nenhuma camisa encontrada com esses filtros. Tente outra busca.
@@ -313,21 +290,18 @@ function Home() {
                 Revenda com a gente
               </h2>
               <p className="mt-4 max-w-xl text-sm text-background/70">
-                Preços de atacado a partir de 3 peças, catálogo atualizado
-                diariamente e envio no mesmo dia para pedidos aprovados até 15h.
+                Preços de atacado a partir de 3 peças, catálogo atualizado diariamente e envio no
+                mesmo dia para pedidos aprovados até 15h.
               </p>
             </div>
             <a
-              href={whatsappLink(
-                "Olá! Quero saber mais sobre revenda de camisas na Futz.",
-              )}
+              href={whatsappLink("Olá! Quero saber mais sobre revenda de camisas na North.")}
               target="_blank"
               rel="noopener noreferrer"
               className="w-fit bg-[#25D366] px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-black"
             >
               Falar no WhatsApp
             </a>
-
           </div>
         </section>
       </main>
