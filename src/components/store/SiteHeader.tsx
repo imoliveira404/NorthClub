@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "@tanstack/react-router";
-import { Menu, ShoppingCart, User, X } from "lucide-react";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
+import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { getAvatarImage, useGuestAccount } from "@/lib/guest-account";
 
@@ -33,7 +33,10 @@ export function SiteHeader() {
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
   const [logoExpanded, setLogoExpanded] = useState(true);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
@@ -52,16 +55,27 @@ export function SiteHeader() {
         {ANNOUNCEMENTS[index]}
       </div>
 
-      <div className="bg-card">
+      <div className="bg-card border-b border-border/50">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 sm:gap-4 px-4 py-4">
-          {/* Lado Esquerdo: Menu Hamburguer no Mobile / Spacer no Desktop */}
-          <div className="flex flex-1 items-center justify-start">
+          {/* Lado Esquerdo: Menu Hamburguer no Mobile + Lupa de Pesquisa ao Lado Direito */}
+          <div className="flex flex-1 items-center justify-start gap-3 sm:gap-4">
             <button
-              className="text-foreground lg:hidden"
+              className="text-foreground lg:hidden hover:text-primary transition-colors"
               aria-label="Abrir menu"
               onClick={() => setOpen((v) => !v)}
             >
               {open ? <X className="size-6" /> : <Menu className="size-6" />}
+            </button>
+
+            {/* Lupa de Pesquisa ao lado direito do menu hamburguer */}
+            <button
+              type="button"
+              onClick={() => setSearchOpen((v) => !v)}
+              className="text-foreground flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider hover:text-primary transition-colors"
+              aria-label="Buscar produtos"
+            >
+              <Search className="size-5 sm:size-6 shrink-0" />
+              <span className="hidden sm:inline-block">Buscar</span>
             </button>
           </div>
 
@@ -200,6 +214,50 @@ export function SiteHeader() {
             </Link>
           </div>
         </div>
+
+        {/* Barra de Pesquisa Expansível ao clicar na Lupa */}
+        {searchOpen && (
+          <div className="border-t border-border bg-card px-4 py-3 shadow-lg">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!searchQuery.trim()) return;
+                navigate({
+                  to: "/produtos",
+                  search: { q: searchQuery.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 },
+                });
+                setSearchOpen(false);
+              }}
+              className="mx-auto flex max-w-2xl items-center gap-2"
+            >
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Pesquisar por time, camisa ou categoria (ex: Flamengo, Real Madrid...)"
+                  className="w-full border border-border bg-background py-2.5 pl-9 pr-4 text-xs font-semibold text-foreground placeholder:text-muted-foreground outline-none focus:border-primary"
+                  autoFocus
+                />
+              </div>
+              <button
+                type="submit"
+                className="bg-primary px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-primary-foreground hover:opacity-90 transition-opacity"
+              >
+                Buscar
+              </button>
+              <button
+                type="button"
+                onClick={() => setSearchOpen(false)}
+                className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="Fechar busca"
+              >
+                <X className="size-5" />
+              </button>
+            </form>
+          </div>
+        )}
 
         <nav className="border-t border-border">
           <div className="mx-auto hidden max-w-7xl items-center gap-1.5 px-4 lg:flex">
