@@ -74,11 +74,11 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
   head: () => ({
     meta: buildSeoMeta({
-      title: "North | Camisas de Time Tailandesas 1.1 a Pronta Entrega",
+      title: "North Football Club — Camisas de Futebol Tailandesas 1.1",
       description:
-        "Camisas de time versão tailandesa 1.1 a pronta entrega no Brasil. Atacado e varejo com envio rápido para todo o país.",
+        "⚽ Sua Camisa. Seu Time. Camisas de futebol versão tailandesa 1.1 a pronta entrega com envio rápido para todo o Brasil. Atacado e varejo com máxima qualidade!",
       path: "/",
-      image: "/assets/hero-stadium.webp",
+      image: "/og-preview.jpg",
     }),
     links: [
       { rel: "canonical", href: "https://northclub.com.br" },

@@ -1,29 +1,29 @@
-export const SITE_URL = "https://northclub.com.br";
+export const SITE_URL = "https://northclub.vercel.app";
 export const SITE_NAME = "North Football Club";
 
+export const DEFAULT_TITLE = "North Football Club — Camisas de Futebol Tailandesas 1.1";
+export const DEFAULT_DESCRIPTION = "⚽ Sua Camisa. Seu Time. Camisas de futebol versão tailandesa 1.1 a pronta entrega com envio rápido para todo o Brasil. Atacado e varejo com máxima qualidade!";
+
 export const DEFAULT_KEYWORDS = [
+  "North Football Club",
   "camisas de time tailandesas 1.1",
   "camisas de futebol pronta entrega",
   "fornecedor camisas de futebol atacado",
   "camisas de time tailandesa pronta entrega brasil",
   "camisas retrô futebol 1.1",
-  "camisa do flamengo tailandesa",
-  "camisa do palmeiras tailandesa",
-  "camisa do corinthians tailandesa",
-  "camisa do sao paulo tailandesa",
   "mantos de futebol 1.1",
   "camisas de time atacado e varejo",
 ].join(", ");
 
 export function buildSeoMeta({
-  title,
-  description,
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
   path = "",
-  image = "/assets/hero-stadium.webp",
+  image = "/og-preview.jpg",
   keywords = DEFAULT_KEYWORDS,
 }: {
-  title: string;
-  description: string;
+  title?: string;
+  description?: string;
   path?: string;
   image?: string;
   keywords?: string;
@@ -44,7 +44,7 @@ export function buildSeoMeta({
     { name: "apple-mobile-web-app-title", content: SITE_NAME },
     { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
 
-    // Open Graph / WhatsApp / Facebook
+    // Open Graph / WhatsApp / Facebook / Instagram / iMessage / Telegram
     { property: "og:site_name", content: SITE_NAME },
     { property: "og:title", content: title },
     { property: "og:description", content: description },
@@ -53,7 +53,7 @@ export function buildSeoMeta({
     { property: "og:locale", content: "pt_BR" },
     { property: "og:image", content: imageUrl },
     { property: "og:image:secure_url", content: imageUrl },
-    { property: "og:image:type", content: "image/webp" },
+    { property: "og:image:type", content: "image/jpeg" },
     { property: "og:image:width", content: "1200" },
     { property: "og:image:height", content: "630" },
     { property: "og:image:alt", content: `${title} — ${SITE_NAME}` },
@@ -74,8 +74,8 @@ export function getStructuredDataJSON() {
     "name": SITE_NAME,
     "url": SITE_URL,
     "logo": `${SITE_URL}/favicon.svg`,
-    "image": `${SITE_URL}/assets/hero-stadium.webp`,
-    "description": "Loja especializada em camisas de time versão tailandesa 1.1 a pronta entrega com envio rápido para todo o Brasil.",
+    "image": `${SITE_URL}/og-preview.jpg`,
+    "description": DEFAULT_DESCRIPTION,
     "telephone": "+5511966973200",
     "priceRange": "$$",
     "address": {
