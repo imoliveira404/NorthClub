@@ -78,10 +78,12 @@ export function SiteHeader() {
               >
                 <User className="size-5 sm:size-6 shrink-0" />
                 
-                {/* Mobile: Texto "Login" ou Nome de Usuário */}
-                <span className="text-[11px] font-bold uppercase tracking-wider text-foreground sm:hidden">
-                  {guestEmail ? guestEmail.split("@")[0] : "Login"}
-                </span>
+                {/* Mobile: Texto "Login" apenas deslogado */}
+                {!guestEmail && (
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-foreground sm:hidden">
+                    Login
+                  </span>
+                )}
 
                 {/* Desktop: Minha conta completo */}
                 <span className="hidden sm:inline-block">
