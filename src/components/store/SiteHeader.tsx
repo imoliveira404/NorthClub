@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { Link, useLocation, useNavigate } from "@tanstack/react-router";
 import { Menu, Search, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
 import { useGuestAccount } from "@/lib/guest-account";
@@ -35,6 +35,7 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -214,34 +215,27 @@ export function SiteHeader() {
         )}
 
         <nav className="border-t border-border">
-          <div className="mx-auto hidden max-w-7xl items-center gap-6 px-4 lg:flex">
-            <Link
-              to="/produtos"
-              search={defaultCatalogSearch}
-              className="flex items-center gap-2 bg-foreground px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-background hover:bg-foreground/90"
-            >
-              <Menu className="size-4" /> Categorias
-            </Link>
-            {NAV.map((item) =>
-              "search" in item ? (
-                <Link
-                  key={item.label}
-                  to={item.path}
-                  search={item.search}
-                  className="py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary"
-                >
+          <div className="mx-auto hidden max-w-7xl items-center gap-1.5 px-4 lg:flex">
+            {NAV.map((item) => {
+              const isActive =
+                item.path === "/"
+                  ? location.pathname === "/"
+                  : location.pathname.startsWith(item.path);
+
+              const desktopClass = isActive
+                ? "bg-foreground px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-background transition-colors"
+                : "px-3.5 py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary hover:bg-muted/50";
+
+              return "search" in item ? (
+                <Link key={item.label} to={item.path} search={item.search} className={desktopClass}>
                   {item.label}
                 </Link>
               ) : (
-                <Link
-                  key={item.label}
-                  to={item.path}
-                  className="py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary"
-                >
+                <Link key={item.label} to={item.path} className={desktopClass}>
                   {item.label}
                 </Link>
-              ),
-            )}
+              );
+            })}
           </div>
 
           {open && (
@@ -256,14 +250,23 @@ export function SiteHeader() {
                   className="w-full border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
                 />
               </form>
-              {NAV.map((item) =>
-                "search" in item ? (
+              {NAV.map((item) => {
+                const isActive =
+                  item.path === "/"
+                    ? location.pathname === "/"
+                    : location.pathname.startsWith(item.path);
+
+                const mobileClass = isActive
+                  ? "bg-foreground px-3 py-3 text-sm font-bold uppercase tracking-wide text-background"
+                  : "border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:text-primary";
+
+                return "search" in item ? (
                   <Link
                     key={item.label}
                     to={item.path}
                     search={item.search}
                     onClick={() => setOpen(false)}
-                    className="border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:text-primary"
+                    className={mobileClass}
                   >
                     {item.label}
                   </Link>
@@ -272,12 +275,12 @@ export function SiteHeader() {
                     key={item.label}
                     to={item.path}
                     onClick={() => setOpen(false)}
-                    className="border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:text-primary"
+                    className={mobileClass}
                   >
                     {item.label}
                   </Link>
-                ),
-              )}
+                );
+              })}
             </div>
           )}
         </nav>
