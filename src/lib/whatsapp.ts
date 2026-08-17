@@ -1,8 +1,8 @@
 import type { CartItem } from "@/lib/cart";
 import { formatBRL } from "@/lib/products";
 
-export const WHATSAPP_NUMBER = "5511954463903";
-export const WHATSAPP_DISPLAY = "(11) 95446-3903";
+export const WHATSAPP_NUMBER = "5511966973200";
+export const WHATSAPP_DISPLAY = "+55 11 96697-3200";
 
 export function whatsappLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

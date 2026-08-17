@@ -4,7 +4,7 @@ import { Clock, Mail, MapPin, MessageSquare, Send } from "lucide-react";
 import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { Toaster, toast } from "sonner";
-import { whatsappLink } from "@/lib/whatsapp";
+import { WHATSAPP_DISPLAY, whatsappLink } from "@/lib/whatsapp";
 
 export const Route = createFileRoute("/contato")({
   head: () => ({
@@ -83,7 +83,10 @@ function ContatoPage() {
                     <h3 className="font-display text-lg uppercase text-foreground">
                       WhatsApp Oficial
                     </h3>
-                    <p className="text-xs text-muted-foreground">
+                    <p className="text-xs font-bold text-primary mt-0.5">
+                      {WHATSAPP_DISPLAY}
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
                       Atendimento rápido e humanizado
                     </p>
                   </div>

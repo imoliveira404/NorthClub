@@ -85,7 +85,7 @@ export function SiteFooter() {
             </button>
           </form>
           <p className="mt-4 text-sm text-background/70">
-            Atendimento no WhatsApp de seg. a sáb., 9h às 18h.
+            WhatsApp: <strong className="text-background">+55 11 96697-3200</strong> (Seg. a Sáb., 9h às 18h)
           </p>
         </div>
       </div>
