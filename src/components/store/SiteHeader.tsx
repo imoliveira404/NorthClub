@@ -32,11 +32,18 @@ export function SiteHeader() {
   const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
+  const [logoExpanded, setLogoExpanded] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
     const id = setInterval(() => setIndex((i) => (i + 1) % ANNOUNCEMENTS.length), 4000);
-    return () => clearInterval(id);
+    const logoTimer = setTimeout(() => {
+      setLogoExpanded(false);
+    }, 4000);
+    return () => {
+      clearInterval(id);
+      clearTimeout(logoTimer);
+    };
   }, []);
 
   return (
@@ -58,13 +65,23 @@ export function SiteHeader() {
             </button>
           </div>
 
-          {/* Centro: Nome "North." Centralizado */}
+          {/* Centro: Nome "North." Centralizado com Animação Dinâmica */}
           <Link
             to="/"
             search={defaultCatalogSearch}
-            className="font-display text-3xl uppercase tracking-tight text-foreground text-center shrink-0"
+            onMouseEnter={() => setLogoExpanded(true)}
+            onMouseLeave={() => setLogoExpanded(false)}
+            className="group font-display text-3xl uppercase tracking-tight text-foreground text-center shrink-0 flex items-center justify-center"
           >
-            North<span className="text-primary">.</span>
+            <span>N</span>
+            <span
+              className={`inline-block overflow-hidden transition-all duration-700 ease-in-out ${
+                logoExpanded ? "max-w-[5rem] opacity-100" : "max-w-0 opacity-0"
+              }`}
+            >
+              orth
+            </span>
+            <span className="text-primary">.</span>
           </Link>
 
           {/* Lado Direito: Minha Conta (Desktop) e Sacola */}
