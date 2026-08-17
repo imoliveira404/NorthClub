@@ -235,10 +235,10 @@ function Home() {
           />
           <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-20">
             <p className="font-display text-5xl uppercase leading-[0.9] text-background sm:text-7xl lg:text-8xl">
-              Tailandesa
+              Sua camisa. Seu time.
             </p>
             <p className="font-display text-4xl uppercase leading-[0.9] text-primary sm:text-6xl lg:text-7xl">
-              Pronta entrega
+              Vista o jogo
             </p>
             <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
               Envios todos os dias!
