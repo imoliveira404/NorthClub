@@ -109,7 +109,12 @@ function ContatoPage() {
                     <strong className="block text-xs font-bold uppercase tracking-wider text-foreground">
                       E-mail de Suporte
                     </strong>
-                    <span className="text-sm text-muted-foreground">contato@northclub.com.br</span>
+                    <a
+                      href="mailto:north.contato@gmail.com"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
+                    >
+                      north.contato@gmail.com
+                    </a>
                   </div>
                 </div>
 
