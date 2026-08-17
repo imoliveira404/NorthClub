@@ -36,7 +36,7 @@ type CatalogSearch = {
   page?: number;
 };
 
-const ITEMS_PER_PAGE = 16;
+const ITEMS_PER_PAGE = 10;
 
 function getPageNumbers(current: number, total: number): (number | string)[] {
   if (total <= 7) {
