@@ -237,7 +237,7 @@ function Home() {
             <p className="font-display text-5xl uppercase leading-[0.9] text-background sm:text-7xl lg:text-8xl">
               Vista o jogo
             </p>
-            <p className="mt-2 font-display text-3xl uppercase leading-[0.9] text-primary sm:text-5xl lg:text-6xl">
+            <p className="mt-2 font-display text-3xl uppercase leading-[0.9] text-primary sm:text-5xl lg:text-6xl" style={{ fontSize: "0.97em" }}>
               Sua camisa. Seu time.
             </p>
             <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
