@@ -12,6 +12,11 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as ComoComprarRouteImport } from './routes/como-comprar'
+import { Route as ContatoRouteImport } from './routes/contato'
+import { Route as ProdutosRouteImport } from './routes/produtos'
+import { Route as QuemSomosRouteImport } from './routes/quem-somos'
+import { Route as TrocaEDevolucoesRouteImport } from './routes/troca-e-devolucoes'
 import { Route as ApiPublicMercadopagoWebhookRouteImport } from './routes/api/public/mercadopago-webhook'
 
 const IndexRoute = IndexRouteImport.update({
@@ -29,6 +34,31 @@ const CheckoutRoute = CheckoutRouteImport.update({
   path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComoComprarRoute = ComoComprarRouteImport.update({
+  id: '/como-comprar',
+  path: '/como-comprar',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContatoRoute = ContatoRouteImport.update({
+  id: '/contato',
+  path: '/contato',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProdutosRoute = ProdutosRouteImport.update({
+  id: '/produtos',
+  path: '/produtos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuemSomosRoute = QuemSomosRouteImport.update({
+  id: '/quem-somos',
+  path: '/quem-somos',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TrocaEDevolucoesRoute = TrocaEDevolucoesRouteImport.update({
+  id: '/troca-e-devolucoes',
+  path: '/troca-e-devolucoes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicMercadopagoWebhookRoute =
   ApiPublicMercadopagoWebhookRouteImport.update({
     id: '/api/public/mercadopago-webhook',
@@ -40,12 +70,22 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/como-comprar': typeof ComoComprarRoute
+  '/contato': typeof ContatoRoute
+  '/produtos': typeof ProdutosRoute
+  '/quem-somos': typeof QuemSomosRoute
+  '/troca-e-devolucoes': typeof TrocaEDevolucoesRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/como-comprar': typeof ComoComprarRoute
+  '/contato': typeof ContatoRoute
+  '/produtos': typeof ProdutosRoute
+  '/quem-somos': typeof QuemSomosRoute
+  '/troca-e-devolucoes': typeof TrocaEDevolucoesRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRoutesById {
@@ -53,18 +93,46 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/checkout': typeof CheckoutRoute
+  '/como-comprar': typeof ComoComprarRoute
+  '/contato': typeof ContatoRoute
+  '/produtos': typeof ProdutosRoute
+  '/quem-somos': typeof QuemSomosRoute
+  '/troca-e-devolucoes': typeof TrocaEDevolucoesRoute
   '/api/public/mercadopago-webhook': typeof ApiPublicMercadopagoWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/admin' | '/checkout' | '/api/public/mercadopago-webhook'
+  fullPaths:
+    | '/'
+    | '/admin'
+    | '/checkout'
+    | '/como-comprar'
+    | '/contato'
+    | '/produtos'
+    | '/quem-somos'
+    | '/troca-e-devolucoes'
+    | '/api/public/mercadopago-webhook'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/admin' | '/checkout' | '/api/public/mercadopago-webhook'
+  to:
+    | '/'
+    | '/admin'
+    | '/checkout'
+    | '/como-comprar'
+    | '/contato'
+    | '/produtos'
+    | '/quem-somos'
+    | '/troca-e-devolucoes'
+    | '/api/public/mercadopago-webhook'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/checkout'
+    | '/como-comprar'
+    | '/contato'
+    | '/produtos'
+    | '/quem-somos'
+    | '/troca-e-devolucoes'
     | '/api/public/mercadopago-webhook'
   fileRoutesById: FileRoutesById
 }
@@ -72,6 +140,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   CheckoutRoute: typeof CheckoutRoute
+  ComoComprarRoute: typeof ComoComprarRoute
+  ContatoRoute: typeof ContatoRoute
+  ProdutosRoute: typeof ProdutosRoute
+  QuemSomosRoute: typeof QuemSomosRoute
+  TrocaEDevolucoesRoute: typeof TrocaEDevolucoesRoute
   ApiPublicMercadopagoWebhookRoute: typeof ApiPublicMercadopagoWebhookRoute
 }
 
@@ -98,6 +171,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/como-comprar': {
+      id: '/como-comprar'
+      path: '/como-comprar'
+      fullPath: '/como-comprar'
+      preLoaderRoute: typeof ComoComprarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contato': {
+      id: '/contato'
+      path: '/contato'
+      fullPath: '/contato'
+      preLoaderRoute: typeof ContatoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produtos': {
+      id: '/produtos'
+      path: '/produtos'
+      fullPath: '/produtos'
+      preLoaderRoute: typeof ProdutosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quem-somos': {
+      id: '/quem-somos'
+      path: '/quem-somos'
+      fullPath: '/quem-somos'
+      preLoaderRoute: typeof QuemSomosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/troca-e-devolucoes': {
+      id: '/troca-e-devolucoes'
+      path: '/troca-e-devolucoes'
+      fullPath: '/troca-e-devolucoes'
+      preLoaderRoute: typeof TrocaEDevolucoesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/mercadopago-webhook': {
       id: '/api/public/mercadopago-webhook'
       path: '/api/public/mercadopago-webhook'
@@ -112,6 +220,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   CheckoutRoute: CheckoutRoute,
+  ComoComprarRoute: ComoComprarRoute,
+  ContatoRoute: ContatoRoute,
+  ProdutosRoute: ProdutosRoute,
+  QuemSomosRoute: QuemSomosRoute,
+  TrocaEDevolucoesRoute: TrocaEDevolucoesRoute,
   ApiPublicMercadopagoWebhookRoute: ApiPublicMercadopagoWebhookRoute,
 }
 export const routeTree = rootRouteImport

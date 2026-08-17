@@ -10,13 +10,19 @@ const ANNOUNCEMENTS = [
   "ENVIAMOS PARA TODO O BRASIL",
 ];
 
-const NAV = [
-  "Início",
-  "Produtos",
-  "Contato",
-  "Como comprar",
-  "Trocas e devoluções",
-  "Quem somos",
+const defaultCatalogSearch = { q: "", cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 };
+
+type NavItem =
+  | { label: string; path: "/" | "/produtos"; search: typeof defaultCatalogSearch }
+  | { label: string; path: "/quem-somos" | "/contato" | "/troca-e-devolucoes" | "/como-comprar" };
+
+const NAV: NavItem[] = [
+  { label: "Início", path: "/", search: defaultCatalogSearch },
+  { label: "Produtos", path: "/produtos", search: defaultCatalogSearch },
+  { label: "Quem somos", path: "/quem-somos" },
+  { label: "Contato", path: "/contato" },
+  { label: "Trocas e devoluções", path: "/troca-e-devolucoes" },
+  { label: "Como comprar", path: "/como-comprar" },
 ];
 
 export function SiteHeader() {
@@ -31,9 +37,8 @@ export function SiteHeader() {
   const submitSearch = (e: React.FormEvent) => {
     e.preventDefault();
     void navigate({
-      to: "/",
-      search: { q: term.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0 },
-      hash: "produtos",
+      to: "/produtos",
+      search: { q: term.trim(), cat: "", size: "", sort: "recentes", min: 0, max: 0, page: 1 },
     });
     setOpen(false);
   };
@@ -73,12 +78,13 @@ export function SiteHeader() {
             <Search className="pointer-events-none absolute left-[calc(28rem-2.25rem)] top-2.5 hidden size-5 text-muted-foreground xl:block" />
           </form>
 
-          <a
-            href="/"
+          <Link
+            to="/"
+            search={defaultCatalogSearch}
             className="mx-auto font-display text-3xl uppercase tracking-tight text-foreground"
           >
             North<span className="text-primary">.</span>
-          </a>
+          </Link>
 
           <div className="flex flex-1 items-center justify-end gap-5">
             <div className="relative hidden sm:block">
@@ -168,18 +174,33 @@ export function SiteHeader() {
 
         <nav className="border-t border-border">
           <div className="mx-auto hidden max-w-7xl items-center gap-6 px-4 lg:flex">
-            <span className="flex items-center gap-2 bg-foreground px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-background">
+            <Link
+              to="/produtos"
+              search={defaultCatalogSearch}
+              className="flex items-center gap-2 bg-foreground px-4 py-3.5 text-xs font-bold uppercase tracking-wider text-background hover:bg-foreground/90"
+            >
               <Menu className="size-4" /> Categorias
-            </span>
-            {NAV.map((item) => (
-              <a
-                key={item}
-                href="#produtos"
-                className="py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary"
-              >
-                {item}
-              </a>
-            ))}
+            </Link>
+            {NAV.map((item) =>
+              "search" in item ? (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  search={item.search}
+                  className="py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary"
+                >
+                  {item.label}
+                </Link>
+              ) : (
+                <Link
+                  key={item.label}
+                  to={item.path}
+                  className="py-3.5 text-xs font-semibold uppercase tracking-wider text-foreground transition-colors hover:text-primary"
+                >
+                  {item.label}
+                </Link>
+              ),
+            )}
           </div>
 
           {open && (
@@ -194,15 +215,28 @@ export function SiteHeader() {
                   className="w-full border border-border bg-background px-4 py-2.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:border-primary"
                 />
               </form>
-              {NAV.map((item) => (
-                <a
-                  key={item}
-                  href="#produtos"
-                  className="border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground"
-                >
-                  {item}
-                </a>
-              ))}
+              {NAV.map((item) =>
+                "search" in item ? (
+                  <Link
+                    key={item.label}
+                    to={item.path}
+                    search={item.search}
+                    onClick={() => setOpen(false)}
+                    className="border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:text-primary"
+                  >
+                    {item.label}
+                  </Link>
+                ) : (
+                  <Link
+                    key={item.label}
+                    to={item.path}
+                    onClick={() => setOpen(false)}
+                    className="border-b border-border py-3 text-sm font-semibold uppercase tracking-wide text-foreground hover:text-primary"
+                  >
+                    {item.label}
+                  </Link>
+                ),
+              )}
             </div>
           )}
         </nav>
