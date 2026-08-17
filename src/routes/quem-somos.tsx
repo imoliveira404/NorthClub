@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BadgeCheck, PackageCheck, ShieldCheck, Sparkles, Users } from "lucide-react";
 import { SiteHeader } from "@/components/store/SiteHeader";
@@ -20,8 +21,56 @@ export const Route = createFileRoute("/quem-somos")({
 });
 
 function QuemSomosPage() {
+  const [loading, setLoading] = useState(true);
+  const [fade, setFade] = useState(false);
+  const [logoExpanded, setLogoExpanded] = useState(true);
+
+  useEffect(() => {
+    // Recolher as letras "orth" para virar "N." após 1.5s
+    const logoTimer = setTimeout(() => {
+      setLogoExpanded(false);
+    }, 1500);
+
+    // Iniciar o fade-out da tela branca e do logo aos 3.5s
+    const fadeTimer = setTimeout(() => {
+      setFade(true);
+    }, 3500);
+
+    // Encerrar e remover a tela de loading totalmente aos 4.0s
+    const endTimer = setTimeout(() => {
+      setLoading(false);
+    }, 4000);
+
+    return () => {
+      clearTimeout(logoTimer);
+      clearTimeout(fadeTimer);
+      clearTimeout(endTimer);
+    };
+  }, []);
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      {/* Tela de Loading Branca com Animação Centralizada do Logo North. */}
+      {loading && (
+        <div
+          className={`fixed inset-0 z-[100] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out ${
+            fade ? "opacity-0 pointer-events-none" : "opacity-100"
+          }`}
+        >
+          <div className="font-display text-5xl sm:text-7xl uppercase tracking-tight text-black flex items-center justify-center">
+            <span>N</span>
+            <span
+              className={`inline-block overflow-hidden transition-all duration-700 ease-in-out ${
+                logoExpanded ? "max-w-[8rem] opacity-100" : "max-w-0 opacity-0"
+              }`}
+            >
+              orth
+            </span>
+            <span className="text-primary">.</span>
+          </div>
+        </div>
+      )}
+
       <SiteHeader />
 
       <main>
