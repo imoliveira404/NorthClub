@@ -26,20 +26,20 @@ function QuemSomosPage() {
   const [logoExpanded, setLogoExpanded] = useState(true);
 
   useEffect(() => {
-    // Recolher as letras "orth" para virar "N." após 1.5s
+    // Recolher as letras "orth" para virar "N." após 600ms
     const logoTimer = setTimeout(() => {
       setLogoExpanded(false);
-    }, 1500);
+    }, 600);
 
-    // Iniciar o fade-out da tela branca e do logo aos 3.5s
+    // Iniciar o fade-out da tela branca e do logo aos 1.5s
     const fadeTimer = setTimeout(() => {
       setFade(true);
-    }, 3500);
+    }, 1500);
 
-    // Encerrar e remover a tela de loading totalmente aos 4.0s
+    // Encerrar e remover a tela de loading totalmente aos 2.0s (metade do tempo)
     const endTimer = setTimeout(() => {
       setLoading(false);
-    }, 4000);
+    }, 2000);
 
     return () => {
       clearTimeout(logoTimer);
