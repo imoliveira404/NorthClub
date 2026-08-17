@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "@tanstack/react-router";
 import { Menu, ShoppingCart, User, X } from "lucide-react";
 import { useCart } from "@/lib/cart";
-import { useGuestAccount } from "@/lib/guest-account";
+import { getAvatarImage, useGuestAccount } from "@/lib/guest-account";
 
 const ANNOUNCEMENTS = [
   "DIRETO DO BRASIL E SEM TAXA",
@@ -27,7 +27,7 @@ const NAV: NavItem[] = [
 
 export function SiteHeader() {
   const { count } = useCart();
-  const { email: guestEmail, signIn, signOut } = useGuestAccount();
+  const { email: guestEmail, avatarIndex, signIn, signOut } = useGuestAccount();
   const [accountOpen, setAccountOpen] = useState(false);
   const [emailInput, setEmailInput] = useState("");
   const [index, setIndex] = useState(0);
@@ -76,7 +76,15 @@ export function SiteHeader() {
                 onClick={() => setAccountOpen((v) => !v)}
                 className="flex items-center gap-1.5 sm:gap-2 text-left text-xs leading-tight text-foreground"
               >
-                <User className="size-5 sm:size-6 shrink-0" />
+                {guestEmail ? (
+                  <img
+                    src={getAvatarImage(avatarIndex)}
+                    alt="Foto de Perfil"
+                    className="size-7 sm:size-8 rounded-full object-cover border-2 border-primary shadow-sm shrink-0"
+                  />
+                ) : (
+                  <User className="size-5 sm:size-6 shrink-0" />
+                )}
                 
                 {/* Mobile: Texto "Login" apenas deslogado */}
                 {!guestEmail && (
@@ -107,17 +115,28 @@ export function SiteHeader() {
                 <div className="absolute right-0 top-full z-50 mt-3 w-72 max-w-[calc(100vw-2rem)] border border-border bg-card p-4 shadow-xl">
                   {guestEmail ? (
                     <>
-                      <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                        Conectado como
-                      </p>
-                      <p className="mt-1 truncate text-sm font-semibold text-foreground">{guestEmail.split("@")[0]}</p>
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={getAvatarImage(avatarIndex)}
+                          alt="Foto de Perfil"
+                          className="size-10 rounded-full object-cover border-2 border-primary shadow-md shrink-0"
+                        />
+                        <div className="overflow-hidden">
+                          <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
+                            Conectado como
+                          </p>
+                          <p className="truncate text-sm font-bold text-foreground">
+                            {guestEmail.split("@")[0]}
+                          </p>
+                        </div>
+                      </div>
                       <button
                         type="button"
                         onClick={() => {
                           signOut();
                           setAccountOpen(false);
                         }}
-                        className="mt-4 w-full border border-border py-2.5 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-primary"
+                        className="mt-4 w-full border border-border py-2.5 text-[11px] font-bold uppercase tracking-widest text-foreground hover:border-primary transition-colors"
                       >
                         Sair
                       </button>
