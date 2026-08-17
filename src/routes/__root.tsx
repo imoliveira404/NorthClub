@@ -81,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       image: "/assets/hero-stadium.webp",
     }),
     links: [
+      { rel: "canonical", href: "https://northclub.com.br" },
       {
         rel: "stylesheet",
         href: appCss,
