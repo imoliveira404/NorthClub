@@ -128,7 +128,7 @@ const SORTS = [
 
 const BENEFITS = [
   { icon: PackageCheck, title: "Pronta entrega", text: "Estoque no Brasil" },
-  { icon: Truck, title: "Enviamos p/ todo o Brasil", text: "Sem taxas extras" },
+  { icon: Truck, title: "Envios todos os dias!", text: "Sem taxas extras" },
   { icon: BadgeCheck, title: "Versão 1.1", text: "Qualidade tailandesa" },
   { icon: ShieldCheck, title: "Compra segura", text: "Troca facilitada" },
 ];
@@ -241,7 +241,7 @@ function Home() {
               Pronta entrega
             </p>
             <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
-              Enviamos p/ todo o Brasil
+              Envios todos os dias!
             </p>
             <a
               href="#produtos"
