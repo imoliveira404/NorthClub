@@ -14,7 +14,6 @@ export function ScrollReveal({ children, className = "", delay = 0 }: ScrollReve
     const element = ref.current;
     if (!element) return;
 
-    // Se IntersectionObserver não for suportado ou usuário preferir sem animação, exibe imediatamente
     if (
       typeof window === "undefined" ||
       !("IntersectionObserver" in window) ||
@@ -26,15 +25,17 @@ export function ScrollReveal({ children, className = "", delay = 0 }: ScrollReve
 
     const observer = new IntersectionObserver(
       (entries) => {
-        const entry = entries[0];
-        if (entry?.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true);
+            observer.unobserve(entry.target);
+          }
+        });
       },
       {
-        threshold: 0.1,
-        rootMargin: "0px 0px -40px 0px",
+        root: null,
+        rootMargin: "0px 0px -20px 0px",
+        threshold: 0.05,
       }
     );
 
@@ -46,15 +47,16 @@ export function ScrollReveal({ children, className = "", delay = 0 }: ScrollReve
     <div
       ref={ref}
       style={{
-        transitionDuration: "600ms",
+        transitionProperty: "transform, opacity",
+        transitionDuration: "650ms",
         transitionTimingFunction: "cubic-bezier(0.16, 1, 0.3, 1)",
         transitionDelay: `${delay}ms`,
         willChange: "transform, opacity",
       }}
-      className={`transition-all ${
+      className={`${
         isVisible
           ? "opacity-100 translate-y-0"
-          : "opacity-0 translate-y-6 pointer-events-none"
+          : "opacity-0 translate-y-8 pointer-events-none"
       } ${className}`}
     >
       {children}
