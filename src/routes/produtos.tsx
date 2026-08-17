@@ -25,6 +25,7 @@ import {
   type AdminProduct,
 } from "@/lib/admin-products";
 import { useStoreProducts } from "@/lib/product-store";
+import { useItemsPerPage } from "@/hooks/use-items-per-page";
 
 type CatalogSearch = {
   q: string;
@@ -105,6 +106,7 @@ const chip = (active: boolean) =>
 
 function ProdutosPage() {
   const storeProducts = useStoreProducts();
+  const itemsPerPage = useItemsPerPage();
   const { q, cat, size, sort, min, max, page } = Route.useSearch();
   const navigate = useNavigate({ from: "/produtos" });
 
@@ -166,15 +168,15 @@ function ProdutosPage() {
     });
 
   const totalItems = filtered.length;
-  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE) || 1;
+  const totalPages = Math.ceil(totalItems / itemsPerPage) || 1;
   const currentPage = Math.min(Math.max(1, page ?? 1), totalPages);
 
-  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1;
-  const endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+  const startItem = totalItems === 0 ? 0 : (currentPage - 1) * itemsPerPage + 1;
+  const endItem = Math.min(currentPage * itemsPerPage, totalItems);
 
   const paginatedProducts = filtered.slice(
-    (currentPage - 1) * ITEMS_PER_PAGE,
-    currentPage * ITEMS_PER_PAGE,
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage,
   );
 
   const activeCount = (term ? 1 : 0) + (cat ? 1 : 0) + (size ? 1 : 0) + (min || max ? 1 : 0);
