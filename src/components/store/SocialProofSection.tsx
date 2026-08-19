@@ -84,6 +84,8 @@ const CAROUSEL_REVIEWS = [
   },
 ];
 
+const INFINITE_REVIEWS = [...CAROUSEL_REVIEWS, ...CAROUSEL_REVIEWS, ...CAROUSEL_REVIEWS];
+
 const WHATSAPP_PRINTS = [
   {
     name: "Guilherme M.",
@@ -160,10 +162,14 @@ export function SocialProofSection() {
           </p>
         </div>
 
-        {/* Carrossel de Depoimentos Reais */}
-        <div className="relative mt-8 sm:mt-10">
-          {/* Botões de Navegação */}
-          <div className="absolute -top-14 right-0 hidden sm:flex items-center gap-2">
+        {/* Carrossel de Depoimentos Reais (Slide Infinito) */}
+        <div className="relative mt-8 sm:mt-10 overflow-hidden group">
+          {/* Sombras de esmaecimento nas extremidades */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-12 sm:w-20 bg-gradient-to-r from-background to-transparent z-10" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-12 sm:w-20 bg-gradient-to-l from-background to-transparent z-10" />
+
+          {/* Botões de Navegação Manual */}
+          <div className="absolute -top-14 right-0 hidden sm:flex items-center gap-2 z-20">
             <button
               type="button"
               onClick={() => scroll("left")}
@@ -184,64 +190,66 @@ export function SocialProofSection() {
 
           <div
             ref={carouselRef}
-            className="flex gap-4 overflow-x-auto pb-4 pt-2 snap-x snap-mandatory scrollbar-none scroll-smooth"
+            className="flex gap-4 overflow-x-auto pb-4 pt-2 scrollbar-none scroll-smooth"
             style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
           >
-            {CAROUSEL_REVIEWS.map((rev) => (
-              <div
-                key={rev.id}
-                className="w-[290px] sm:w-[360px] shrink-0 snap-start rounded-none border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
-              >
-                <div>
-                  {/* Top Header Card */}
-                  <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-3">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={rev.avatar}
-                        alt={rev.name}
-                        className="size-11 rounded-full object-cover border border-primary/30"
-                      />
-                      <div>
-                        <h3 className="text-xs font-bold text-foreground sm:text-sm">{rev.name}</h3>
-                        <p className="text-[11px] text-muted-foreground">{rev.city}</p>
+            <div className="animate-infinite-scroll flex gap-4 hover:[animation-play-state:paused] shrink-0">
+              {INFINITE_REVIEWS.map((rev, idx) => (
+                <div
+                  key={`${rev.id}-${idx}`}
+                  className="w-[290px] sm:w-[360px] shrink-0 rounded-none border border-border bg-card p-5 shadow-sm transition-all hover:border-primary/60 hover:shadow-md flex flex-col justify-between"
+                >
+                  <div>
+                    {/* Top Header Card */}
+                    <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-3">
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={rev.avatar}
+                          alt={rev.name}
+                          className="size-11 rounded-full object-cover border border-primary/30"
+                        />
+                        <div>
+                          <h3 className="text-xs font-bold text-foreground sm:text-sm">{rev.name}</h3>
+                          <p className="text-[11px] text-muted-foreground">{rev.city}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center text-amber-400">
+                        {Array.from({ length: rev.rating ?? 5 }).map((_, i) => (
+                          <Star key={i} className="size-3.5 fill-current" />
+                        ))}
                       </div>
                     </div>
-                    <div className="flex items-center text-amber-400">
-                      {Array.from({ length: rev.rating ?? 5 }).map((_, i) => (
-                        <Star key={i} className="size-3.5 fill-current" />
-                      ))}
+
+                    {/* Body Comment */}
+                    <div className="relative mt-3">
+                      <Quote className="absolute -left-1 -top-1 size-5 text-primary/15" />
+                      <p className="relative pl-3 text-xs leading-relaxed text-foreground italic">
+                        "{rev.comment}"
+                      </p>
                     </div>
                   </div>
 
-                  {/* Body Comment */}
-                  <div className="relative mt-3">
-                    <Quote className="absolute -left-1 -top-1 size-5 text-primary/15" />
-                    <p className="relative pl-3 text-xs leading-relaxed text-foreground italic">
-                      "{rev.comment}"
-                    </p>
-                  </div>
-                </div>
+                  {/* Footer Tag & Product */}
+                  <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <img
+                        src={rev.jerseyImg}
+                        alt={rev.productName}
+                        className="size-8 object-cover rounded border border-border shrink-0"
+                      />
+                      <span className="truncate text-[10px] font-bold uppercase text-muted-foreground">
+                        {rev.productName}
+                      </span>
+                    </div>
 
-                {/* Footer Tag & Product */}
-                <div className="mt-4 pt-3 border-t border-border/50 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2 min-w-0">
-                    <img
-                      src={rev.jerseyImg}
-                      alt={rev.productName}
-                      className="size-8 object-cover rounded border border-border shrink-0"
-                    />
-                    <span className="truncate text-[10px] font-bold uppercase text-muted-foreground">
-                      {rev.productName}
+                    <span className="inline-flex shrink-0 items-center gap-1 rounded bg-[#25D366]/10 px-2 py-1 text-[10px] font-bold text-[#25D366]">
+                      <CheckCircle2 className="size-3" />
+                      Verificado
                     </span>
                   </div>
-
-                  <span className="inline-flex shrink-0 items-center gap-1 rounded bg-[#25D366]/10 px-2 py-1 text-[10px] font-bold text-[#25D366]">
-                    <CheckCircle2 className="size-3" />
-                    Verificado
-                  </span>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
 
