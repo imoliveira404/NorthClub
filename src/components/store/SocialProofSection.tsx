@@ -122,26 +122,26 @@ export function SocialProofSection() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="relative overflow-hidden rounded-none border border-border bg-foreground text-background shadow-xl">
           <div className="absolute -right-10 -top-10 size-40 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-          <div className="grid grid-cols-2 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4 sm:p-8 divide-y divide-border/20 sm:divide-y-0 sm:divide-x divide-border/20">
+          <div className="grid grid-cols-4 divide-x divide-border/20 p-3 sm:p-8">
             {STATS.map((stat, idx) => {
               const IconComp = stat.icon;
               return (
                 <div
                   key={idx}
-                  className={`flex flex-col items-start p-3 sm:p-4 ${
-                    idx > 0 ? "pt-4 sm:pt-4" : ""
-                  }`}
+                  className="flex flex-col items-start px-2 py-1 sm:px-4 sm:py-2"
                 >
-                  <div className="flex items-center gap-2">
-                    <IconComp className={`size-5 sm:size-6 ${stat.highlight}`} />
-                    <span className="font-display text-2xl font-normal uppercase tracking-tight text-background sm:text-3xl lg:text-4xl">
+                  <div className="flex items-center gap-1 sm:gap-2">
+                    <IconComp className={`size-4 sm:size-6 shrink-0 ${stat.highlight}`} />
+                    <span className="font-display text-sm font-normal uppercase tracking-tight text-background sm:text-3xl lg:text-4xl leading-none">
                       {stat.value}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs font-normal uppercase tracking-wider text-background/90">
+                  <p className="mt-1 sm:mt-1.5 text-[10px] sm:text-xs font-normal uppercase tracking-wider text-background/90 leading-tight">
                     {stat.label}
                   </p>
-                  <p className="mt-0.5 text-[11px] text-background/60">{stat.subtext}</p>
+                  <p className="mt-0.5 text-[9px] sm:text-[11px] text-background/60 leading-tight">
+                    {stat.subtext}
+                  </p>
                 </div>
               );
             })}
