@@ -134,11 +134,11 @@ export function SocialProofSection() {
                 >
                   <div className="flex items-center gap-2">
                     <IconComp className={`size-5 sm:size-6 ${stat.highlight}`} />
-                    <span className="font-display text-2xl font-bold uppercase tracking-tight text-background sm:text-3xl lg:text-4xl">
+                    <span className="font-display text-2xl font-normal uppercase tracking-tight text-background sm:text-3xl lg:text-4xl">
                       {stat.value}
                     </span>
                   </div>
-                  <p className="mt-1.5 text-xs font-bold uppercase tracking-wider text-background/90">
+                  <p className="mt-1.5 text-xs font-normal uppercase tracking-wider text-background/90">
                     {stat.label}
                   </p>
                   <p className="mt-0.5 text-[11px] text-background/60">{stat.subtext}</p>
