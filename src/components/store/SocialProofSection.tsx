@@ -152,13 +152,8 @@ export function SocialProofSection() {
       {/* Header do Nível 2 */}
       <div className="mx-auto max-w-7xl px-4 pt-12 sm:pt-16">
         <div className="flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-[11px] font-bold uppercase tracking-widest text-primary">
-            <Sparkles className="size-3.5" />
-            Prova Social & Credibilidade
-          </div>
-
-          <h2 className="mt-3 font-display text-3xl uppercase tracking-tight text-foreground sm:text-4xl lg:text-5xl">
-            O que nossos clientes dizem
+          <h2 className="font-display text-3xl uppercase tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+            O que nossos <span className="text-primary">clientes dizem</span>
           </h2>
           <p className="mt-2 max-w-2xl text-xs sm:text-sm text-muted-foreground">
             Quem compra na North comprova: máxima qualidade 1.1, bordados impecáveis e suporte humanizado do pedido à entrega.
