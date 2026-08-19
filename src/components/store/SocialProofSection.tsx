@@ -154,11 +154,11 @@ export function SocialProofSection() {
           </div>
         </div>
 
-        {/* Atalho Rápido para o Catálogo (Sugestão 1: Atalho de Conversão) */}
+        {/* Atalho Rápido para o Catálogo (Destacado em Crimson) */}
         <div className="mt-4 sm:mt-6 flex items-center justify-center">
           <a
             href="#produtos"
-            className="group inline-flex items-center gap-2 border border-primary/40 bg-primary/10 px-6 py-3 text-xs font-bold uppercase tracking-widest text-primary transition-all hover:bg-primary hover:text-primary-foreground shadow-sm"
+            className="group inline-flex items-center gap-2 bg-[#DC143C] hover:bg-[#B22222] text-white px-7 py-3.5 text-xs font-bold uppercase tracking-widest transition-all shadow-md hover:shadow-lg hover:scale-[1.02]"
           >
             Ir direto para o catálogo de camisas
             <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
