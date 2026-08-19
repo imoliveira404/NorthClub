@@ -13,6 +13,7 @@ import { SiteHeader } from "@/components/store/SiteHeader";
 import { SiteFooter } from "@/components/store/SiteFooter";
 import { ProductCard } from "@/components/store/ProductCard";
 import { FilterPanel } from "@/components/store/FilterPanel";
+import { SocialProofSection } from "@/components/store/SocialProofSection";
 import {
   Pagination,
   PaginationContent,
@@ -323,6 +324,9 @@ function Home() {
             ))}
           </div>
         </section>
+
+        {/* Seção de Prova Social & Avaliações dos Clientes */}
+        <SocialProofSection />
 
         {/* Banner Promocional Destaque */}
         <section className="mx-auto max-w-7xl px-0 sm:px-4 pt-6 sm:pt-10 pb-2">
