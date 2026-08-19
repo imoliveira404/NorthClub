@@ -160,7 +160,7 @@ export function SocialProofSection() {
             href="#produtos"
             className="group inline-flex items-center gap-2 bg-primary text-primary-foreground hover:opacity-95 px-7 py-3.5 text-xs font-bold uppercase tracking-widest transition-all shadow-md hover:shadow-lg hover:scale-[1.02]"
           >
-            Ir direto para o catálogo de camisas
+            VER CATÁLOGO
             <ArrowDown className="size-4 transition-transform group-hover:translate-y-0.5" />
           </a>
         </div>
