@@ -128,24 +128,24 @@ export function SocialProofSection() {
       <div className="mx-auto max-w-7xl px-4">
         <div className="relative overflow-hidden rounded-none border border-border bg-foreground text-background shadow-xl">
           <div className="absolute -right-10 -top-10 size-40 rounded-full bg-primary/10 blur-3xl pointer-events-none" />
-          <div className="grid grid-cols-4 divide-x divide-border/20 p-3 sm:p-8">
+          <div className="grid grid-cols-2 gap-3 p-4 sm:grid-cols-2 lg:grid-cols-4 sm:gap-6 sm:p-8">
             {STATS.map((stat, idx) => {
               const IconComp = stat.icon;
               return (
                 <div
                   key={idx}
-                  className="flex flex-col items-start px-2 py-1 sm:px-4 sm:py-2"
+                  className="flex flex-col items-start p-3.5 sm:p-5 border border-border/25 bg-background/5 rounded-none"
                 >
-                  <div className="flex items-center gap-1 sm:gap-2">
-                    <IconComp className={`size-4 sm:size-6 shrink-0 ${stat.highlight}`} />
-                    <span className="font-display text-sm font-normal uppercase tracking-tight text-background sm:text-3xl lg:text-4xl leading-none">
+                  <div className="flex items-center gap-2">
+                    <IconComp className={`size-5 sm:size-7 shrink-0 ${stat.highlight}`} />
+                    <span className="font-display text-xl sm:text-3xl lg:text-4xl font-normal uppercase tracking-tight text-background leading-none">
                       {stat.value}
                     </span>
                   </div>
-                  <p className="mt-1 sm:mt-1.5 text-[10px] sm:text-xs font-normal uppercase tracking-wider text-background/90 leading-tight">
+                  <p className="mt-2 text-xs sm:text-sm font-semibold uppercase tracking-wider text-background/90 leading-tight">
                     {stat.label}
                   </p>
-                  <p className="mt-0.5 text-[9px] sm:text-[11px] text-background/60 leading-tight">
+                  <p className="mt-1 text-[11px] sm:text-xs text-background/65 leading-tight">
                     {stat.subtext}
                   </p>
                 </div>

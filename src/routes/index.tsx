@@ -307,25 +307,6 @@ function Home() {
           </div>
         </section>
 
-        <section className="border-y border-border bg-card">
-          <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 px-4 py-5 sm:gap-6 sm:py-8 sm:grid-cols-2 lg:grid-cols-4">
-            {BENEFITS.map(({ icon: Icon, title, text }) => (
-              <div
-                key={title}
-                className="flex items-center gap-2.5 sm:gap-3 rounded-none border border-border bg-card p-3 sm:p-4"
-              >
-                <Icon className="size-6 sm:size-8 shrink-0 text-primary" />
-                <div>
-                  <p className="text-[13px] sm:text-sm font-bold uppercase tracking-wide text-foreground leading-tight">
-                    {title}
-                  </p>
-                  <p className="text-[11px] sm:text-xs text-muted-foreground mt-0.5">{text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
         {/* Seção de Prova Social & Avaliações dos Clientes */}
         <SocialProofSection />
 
