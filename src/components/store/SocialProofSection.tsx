@@ -311,17 +311,17 @@ export function SocialProofSection() {
             </div>
             <div>
               <h4 className="font-display text-xl uppercase tracking-wider text-background sm:text-2xl">
-                Siga @northclub_oficial
+                Siga @northclub.loja
               </h4>
               <p className="mt-0.5 text-xs text-background/70">
-                +15 mil seguidores acompanhando lançamentos, bastidores de envios e ofertas exclusivas.
+                +15 mil compradores acompanhando lançamentos, bastidores de envios e ofertas exclusivas.
               </p>
             </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
             <a
-              href="https://instagram.com"
+              href="https://instagram.com/northclub.loja"
               target="_blank"
               rel="noopener noreferrer"
               className="flex-1 md:flex-none text-center bg-primary px-6 py-3 text-xs font-bold uppercase tracking-wider text-primary-foreground transition-opacity hover:opacity-90"
