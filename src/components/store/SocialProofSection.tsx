@@ -172,9 +172,6 @@ export function SocialProofSection() {
           <h2 className="font-display text-2xl sm:text-4xl uppercase tracking-tight text-foreground lg:text-5xl">
             O que nossos <span className="text-primary">clientes dizem</span>
           </h2>
-          <p className="mt-2 max-w-2xl text-xs sm:text-sm text-muted-foreground">
-            Transparência total: veja a opinião de quem já comprou ou as conversas reais do nosso suporte.
-          </p>
 
           {/* Abas para alternar formato e economizar scroll */}
           <div className="mt-6 flex flex-wrap items-center justify-center gap-2 border-b border-border/80 pb-4 w-full max-w-md">
