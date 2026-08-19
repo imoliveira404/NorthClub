@@ -34,11 +34,12 @@ import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { buildSeoMeta } from "@/lib/seo";
 import heroStadium from "@/assets/hero-stadium.webp";
 import banner1 from "@/assets/banner1.webp";
-import heroImg1 from "@/assets/hero/imagem1.webp";
-import heroImg2 from "@/assets/hero/imagem2.webp";
-import heroImg3 from "@/assets/hero/imagem3.webp";
+import heroImg1 from "@/assets/hero/Gemini_Generated_Image_mrme3cmrme3cmrme.jfif";
+import heroImg2 from "@/assets/hero/imagem2.jfif";
+import heroImg3 from "@/assets/hero/macro1.jpg";
+import heroImg4 from "@/assets/hero/macro_brasao_inglaterra_estudio_estrela_branca.png";
 
-const HERO_CAROUSEL_IMAGES = [heroImg1, heroImg2, heroImg3];
+const HERO_CAROUSEL_IMAGES = [heroImg1, heroImg2, heroImg3, heroImg4];
 
 type CatalogSearch = {
   q: string;
