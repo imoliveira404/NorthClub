@@ -241,7 +241,7 @@ function ProdutosPage() {
         </section>
 
         <section id="vitrine" className="mx-auto max-w-7xl px-4 py-8 pb-16">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4 border-b border-border pb-6">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-border pb-6">
             <div>
               <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
                 Exibindo {startItem}–{endItem} de {totalItems} camisa(s)
@@ -249,7 +249,7 @@ function ProdutosPage() {
                 {totalPages > 1 ? ` (Página ${currentPage} de ${totalPages})` : ""}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
               <FilterPanel
                 filters={{ q, cat, size, sort, min, max }}
                 categories={availableCategories}
@@ -269,20 +269,34 @@ function ProdutosPage() {
                 activeCount={activeCount}
                 resultCount={filtered.length}
               />
-              <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Ordenar
-                <select
-                  value={sort}
-                  onChange={(e) => setFilter({ sort: e.target.value })}
-                  className="ml-2 border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground outline-none focus:border-primary"
-                >
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+
+              {/* Setas de paginação rápida coladas no lado direito da tela */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1 border border-border bg-card p-1 shadow-sm ml-auto sm:ml-0">
+                  <button
+                    type="button"
+                    disabled={currentPage <= 1}
+                    onClick={() => goToPage(currentPage - 1)}
+                    className={`flex size-8 items-center justify-center text-foreground transition-colors hover:bg-primary hover:text-primary-foreground ${
+                      currentPage <= 1 ? "opacity-30 pointer-events-none" : ""
+                    }`}
+                    aria-label="Página anterior"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={currentPage >= totalPages}
+                    onClick={() => goToPage(currentPage + 1)}
+                    className={`flex size-8 items-center justify-center text-foreground transition-colors hover:bg-primary hover:text-primary-foreground ${
+                      currentPage >= totalPages ? "opacity-30 pointer-events-none" : ""
+                    }`}
+                    aria-label="Próxima página"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 

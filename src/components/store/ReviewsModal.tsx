@@ -158,7 +158,7 @@ export function ReviewsModal({ isOpen, onClose }: ReviewsModalProps) {
             <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <input
               type="text"
-              placeholder="Buscar por time, cidade ou nome..."
+              placeholder="Buscar por depoimento, cidade ou nome..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="w-full border border-border bg-card pl-9 pr-3 py-2 text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none"
@@ -237,10 +237,7 @@ export function ReviewsModal({ isOpen, onClose }: ReviewsModalProps) {
 
                 <p className="mt-3 text-xs leading-relaxed text-foreground">{rev.comment}</p>
 
-                <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-t border-border/50 pt-2.5">
-                  <span className="inline-block rounded-none border border-border bg-muted/50 px-2 py-0.5 text-[10px] font-bold uppercase text-foreground">
-                    {rev.productName}
-                  </span>
+                <div className="mt-3 flex items-center justify-end border-t border-border/50 pt-2.5">
                   <div className="flex items-center gap-1 text-[11px] text-muted-foreground">
                     <ThumbsUp className="size-3" />
                     <span>{rev.likes} acharam útil</span>

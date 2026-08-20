@@ -6,6 +6,7 @@ import { SiteFooter } from "@/components/store/SiteFooter";
 import { Toaster } from "@/components/ui/sonner";
 import { whatsappLink } from "@/lib/whatsapp";
 import { buildSeoMeta } from "@/lib/seo";
+import { LoadingScreen } from "@/components/store/LoadingScreen";
 
 export const Route = createFileRoute("/quem-somos")({
   head: () => ({
@@ -21,56 +22,9 @@ export const Route = createFileRoute("/quem-somos")({
 });
 
 function QuemSomosPage() {
-  const [loading, setLoading] = useState(true);
-  const [fade, setFade] = useState(false);
-  const [logoExpanded, setLogoExpanded] = useState(true);
-
-  useEffect(() => {
-    // Recolher as letras "orth" para virar "N." após 600ms
-    const logoTimer = setTimeout(() => {
-      setLogoExpanded(false);
-    }, 600);
-
-    // Iniciar o fade-out da tela branca e do logo aos 1.5s
-    const fadeTimer = setTimeout(() => {
-      setFade(true);
-    }, 1500);
-
-    // Encerrar e remover a tela de loading totalmente aos 2.0s (metade do tempo)
-    const endTimer = setTimeout(() => {
-      setLoading(false);
-    }, 2000);
-
-    return () => {
-      clearTimeout(logoTimer);
-      clearTimeout(fadeTimer);
-      clearTimeout(endTimer);
-    };
-  }, []);
-
   return (
     <div className="relative min-h-screen bg-background">
-      {/* Tela de Loading Branca com Animação Centralizada do Logo North. */}
-      {loading && (
-        <div
-          className={`fixed inset-0 z-[100] flex items-center justify-center bg-white transition-opacity duration-500 ease-in-out ${
-            fade ? "opacity-0 pointer-events-none" : "opacity-100"
-          }`}
-        >
-          <div className="font-display text-5xl sm:text-7xl uppercase tracking-tight text-black flex items-center justify-center">
-            <span>N</span>
-            <span
-              className={`inline-block overflow-hidden transition-all duration-700 ease-in-out ${
-                logoExpanded ? "max-w-[8rem] opacity-100" : "max-w-0 opacity-0"
-              }`}
-            >
-              orth
-            </span>
-            <span className="text-primary">.</span>
-          </div>
-        </div>
-      )}
-
+      <LoadingScreen />
       <SiteHeader />
 
       <main>

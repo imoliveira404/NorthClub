@@ -32,6 +32,7 @@ import { useItemsPerPage } from "@/hooks/use-items-per-page";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { ScrollReveal } from "@/components/ui/scroll-reveal";
 import { buildSeoMeta } from "@/lib/seo";
+import { LoadingScreen } from "@/components/store/LoadingScreen";
 import heroStadium from "@/assets/hero-stadium.webp";
 import banner1 from "@/assets/banner1.webp";
 import heroImg1 from "@/assets/hero/Gemini_Generated_Image_mrme3cmrme3cmrme.jfif";
@@ -237,114 +238,119 @@ function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-background">
+      <LoadingScreen />
       <SiteHeader />
 
       <main>
-        <section className="relative isolate overflow-hidden bg-foreground">
-          <img
-            src={heroStadium}
-            alt="Estádio de futebol iluminado à noite"
-            loading="eager"
-            fetchPriority="high"
-            width={1920}
-            height={1088}
-            className="absolute inset-0 size-full object-cover opacity-45"
-          />
-          <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-16 sm:py-20">
-            <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight text-background sm:text-7xl lg:text-8xl">
-              Vista o jogo
-            </h1>
-            <p className="mt-2 font-display text-3xl uppercase leading-[0.95] tracking-wide text-primary sm:text-5xl lg:text-6xl">
-              Sua camisa. Seu time.
-            </p>
-            <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
-              Envios todos os dias!
-            </p>
-            <a
-              href="#produtos"
-              className="mt-8 w-fit bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Ver produtos
-            </a>
+        {currentPage === 1 && (
+          <>
+            <section className="relative isolate overflow-hidden bg-foreground">
+              <img
+                src={heroStadium}
+                alt="Estádio de futebol iluminado à noite"
+                loading="eager"
+                fetchPriority="high"
+                width={1920}
+                height={1088}
+                className="absolute inset-0 size-full object-cover opacity-45"
+              />
+              <div className="relative mx-auto flex min-h-[520px] max-w-7xl flex-col justify-center px-4 py-16 sm:py-20">
+                <h1 className="font-display text-5xl uppercase leading-[0.95] tracking-tight text-background sm:text-7xl lg:text-8xl">
+                  Vista o jogo
+                </h1>
+                <p className="mt-2 font-display text-3xl uppercase leading-[0.95] tracking-wide text-primary sm:text-5xl lg:text-6xl">
+                  Sua camisa. Seu time.
+                </p>
+                <p className="mt-8 max-w-sm font-display text-2xl uppercase leading-tight text-background sm:text-3xl">
+                  Envios todos os dias!
+                </p>
+                <a
+                  href="#produtos"
+                  className="mt-8 w-fit bg-primary px-8 py-4 text-xs font-bold uppercase tracking-[0.2em] text-primary-foreground transition-opacity hover:opacity-90"
+                >
+                  Ver produtos
+                </a>
 
-            {/* Carrossel Circular Exclusivo Mobile (Abaixo do Botão Ver Produtos) */}
-            <div className="mt-10 sm:hidden flex flex-col items-center justify-center w-full">
-              <div className="relative size-56 rounded-full border-4 border-primary/80 bg-card/10 p-1.5 shadow-[0_0_30px_rgba(236,72,153,0.45)] backdrop-blur-sm overflow-hidden flex items-center justify-center">
-                <div className="relative size-full rounded-full overflow-hidden">
-                  {HERO_CAROUSEL_IMAGES.map((imgSrc, idx) => (
-                    <img
-                      key={idx}
-                      src={imgSrc}
-                      alt={`Destaque North ${idx + 1}`}
-                      className={`absolute inset-0 size-full object-cover rounded-full transition-all duration-700 ease-in-out ${
-                        heroSlideIndex === idx
-                          ? "opacity-100 scale-100 rotate-0"
-                          : "opacity-0 scale-95 -rotate-3 pointer-events-none"
-                      }`}
-                    />
-                  ))}
+                {/* Carrossel Circular Exclusivo Mobile (Abaixo do Botão Ver Produtos) */}
+                <div className="mt-10 sm:hidden flex flex-col items-center justify-center w-full">
+                  <div className="relative size-56 rounded-full border-4 border-primary/80 bg-card/10 p-1.5 shadow-[0_0_30px_rgba(236,72,153,0.45)] backdrop-blur-sm overflow-hidden flex items-center justify-center">
+                    <div className="relative size-full rounded-full overflow-hidden">
+                      {HERO_CAROUSEL_IMAGES.map((imgSrc, idx) => (
+                        <img
+                          key={idx}
+                          src={imgSrc}
+                          alt={`Destaque North ${idx + 1}`}
+                          className={`absolute inset-0 size-full object-cover rounded-full transition-all duration-700 ease-in-out ${
+                            heroSlideIndex === idx
+                              ? "opacity-100 scale-100 rotate-0"
+                              : "opacity-0 scale-95 -rotate-3 pointer-events-none"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Indicadores do Carrossel (Bolinhas Centralizadas) */}
+                  <div className="mt-4 flex items-center justify-center gap-2">
+                    {HERO_CAROUSEL_IMAGES.map((_, idx) => (
+                      <button
+                        key={idx}
+                        type="button"
+                        onClick={() => setHeroSlideIndex(idx)}
+                        aria-label={`Ir para foto ${idx + 1}`}
+                        className={`h-2.5 rounded-full transition-all duration-300 ${
+                          heroSlideIndex === idx
+                            ? "w-7 bg-primary"
+                            : "w-2.5 bg-background/40 hover:bg-background/70"
+                        }`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
+            </section>
 
-              {/* Indicadores do Carrossel (Bolinhas Centralizadas) */}
-              <div className="mt-4 flex items-center justify-center gap-2">
-                {HERO_CAROUSEL_IMAGES.map((_, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setHeroSlideIndex(idx)}
-                    aria-label={`Ir para foto ${idx + 1}`}
-                    className={`h-2.5 rounded-full transition-all duration-300 ${
-                      heroSlideIndex === idx
-                        ? "w-7 bg-primary"
-                        : "w-2.5 bg-background/40 hover:bg-background/70"
-                    }`}
+            {/* Seção de Prova Social & Avaliações dos Clientes */}
+            <SocialProofSection />
+
+            {/* Banner Promocional Destaque */}
+            <section className="mx-auto max-w-7xl px-0 sm:px-4 pt-6 sm:pt-10 pb-2">
+              <ScrollReveal>
+                <div className="relative overflow-hidden rounded-none border-y sm:border border-border bg-card shadow-md transition-all hover:shadow-xl">
+                  <img
+                    src={banner1}
+                    alt="North Football Club — Novidades e Lançamentos Exclusivos"
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-auto object-contain scale-[1.27] origin-center sm:scale-100 sm:object-cover sm:max-h-[460px]"
                   />
+                </div>
+              </ScrollReveal>
+            </section>
+
+            <section className="mx-auto max-w-7xl px-4 py-12">
+              <h2 className="mb-6 font-display text-2xl uppercase tracking-tight text-foreground">
+                Navegue por categoria
+              </h2>
+              <div className="flex flex-wrap gap-2">
+                {availableCategories.map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setFilter({ cat: cat === c ? "" : c })}
+                    className={chip(cat === c)}
+                  >
+                    {c}
+                  </button>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Seção de Prova Social & Avaliações dos Clientes */}
-        <SocialProofSection />
-
-        {/* Banner Promocional Destaque */}
-        <section className="mx-auto max-w-7xl px-0 sm:px-4 pt-6 sm:pt-10 pb-2">
-          <ScrollReveal>
-            <div className="relative overflow-hidden rounded-none border-y sm:border border-border bg-card shadow-md transition-all hover:shadow-xl">
-              <img
-                src={banner1}
-                alt="North Football Club — Novidades e Lançamentos Exclusivos"
-                loading="lazy"
-                decoding="async"
-                className="w-full h-auto object-contain scale-[1.27] origin-center sm:scale-100 sm:object-cover sm:max-h-[460px]"
-              />
-            </div>
-          </ScrollReveal>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-4 py-12">
-          <h2 className="mb-6 font-display text-2xl uppercase tracking-tight text-foreground">
-            Navegue por categoria
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {availableCategories.map((c) => (
-              <button
-                key={c}
-                type="button"
-                onClick={() => setFilter({ cat: cat === c ? "" : c })}
-                className={chip(cat === c)}
-              >
-                {c}
-              </button>
-            ))}
-          </div>
-        </section>
+            </section>
+          </>
+        )}
 
         <section id="produtos" className="mx-auto max-w-7xl px-4 py-14">
-          <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
             <div>
               <h2 className="font-display text-3xl uppercase tracking-tight text-foreground md:text-4xl">
                 Produtos
@@ -355,7 +361,7 @@ function Home() {
                 {totalPages > 1 ? ` (Página ${currentPage} de ${totalPages})` : ""}
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto">
               <FilterPanel
                 filters={{ q, cat, size, sort, min, max }}
                 categories={availableCategories}
@@ -375,20 +381,34 @@ function Home() {
                 activeCount={activeCount}
                 resultCount={filtered.length}
               />
-              <label className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground">
-                Ordenar
-                <select
-                  value={sort}
-                  onChange={(e) => setFilter({ sort: e.target.value })}
-                  className="ml-2 border border-border bg-card px-3 py-2 text-xs font-semibold uppercase tracking-widest text-foreground outline-none focus:border-primary"
-                >
-                  {SORTS.map((s) => (
-                    <option key={s.value} value={s.value}>
-                      {s.label}
-                    </option>
-                  ))}
-                </select>
-              </label>
+
+              {/* Setas de paginação rápida coladas no lado direito da tela */}
+              {totalPages > 1 && (
+                <div className="flex items-center gap-1 border border-border bg-card p-1 shadow-sm ml-auto sm:ml-0">
+                  <button
+                    type="button"
+                    disabled={currentPage <= 1}
+                    onClick={() => goToPage(currentPage - 1)}
+                    className={`flex size-8 items-center justify-center text-foreground transition-colors hover:bg-primary hover:text-primary-foreground ${
+                      currentPage <= 1 ? "opacity-30 pointer-events-none" : ""
+                    }`}
+                    aria-label="Página anterior"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    disabled={currentPage >= totalPages}
+                    onClick={() => goToPage(currentPage + 1)}
+                    className={`flex size-8 items-center justify-center text-foreground transition-colors hover:bg-primary hover:text-primary-foreground ${
+                      currentPage >= totalPages ? "opacity-30 pointer-events-none" : ""
+                    }`}
+                    aria-label="Próxima página"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
